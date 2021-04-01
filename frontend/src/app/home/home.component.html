@@ -1,0 +1,38 @@
+<div class="container">
+  <mat-form-field appearance="fill" class="coursePicker">
+    <mat-label>Select course</mat-label>
+    <mat-select [(value)]="course" (selectionChange)="changeCourse(course)">
+      <mat-option *ngFor="let course of courseNames" [value]="course">
+        {{ course }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-card class="flashcard">
+    <mat-card-header class="title">
+      <mat-card-title>Frage</mat-card-title>
+    </mat-card-header>
+    <mat-card-actions class="controls">
+      <button (click)="switchCard(-1)" mat-mini-fab color="primary">
+        <mat-icon aria-hidden="false">chevron_left</mat-icon>
+      </button>
+      <button
+        (click)="hideAnswer = !hideAnswer"
+        mat-raised-button
+        color="primary"
+      >
+        Show answer
+      </button>
+      <button (click)="switchCard(1)" mat-mini-fab color="primary">
+        <mat-icon aria-hidden="false" aria-label="Chevron right icon"
+          >chevron_right</mat-icon
+        >
+      </button>
+    </mat-card-actions>
+    <mat-card-content class="center">
+      <div #question></div>
+      <hr class="halfwidth" />
+      <div #answer [hidden]="hideAnswer"></div>
+    </mat-card-content>
+  </mat-card>
+</div>

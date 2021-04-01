@@ -1,0 +1,27 @@
+<p>
+    <mat-toolbar color="primary">
+        <a [routerLink]="['/']" mat-icon-button>
+            <mat-icon>home</mat-icon>
+        </a>
+        <span>StudyOffline</span>
+        <span class="spacer"></span>
+        <a [routerLink]="['/help']" mat-icon-button>
+            <mat-icon>help</mat-icon>
+        </a>
+        <a [routerLink]="['/download']" mat-icon-button>
+            <mat-icon>download</mat-icon>
+        </a>
+        <a [routerLink]="['/upload']" mat-icon-button>
+            <mat-icon>upload</mat-icon>
+        </a>
+        <a [routerLink]="['/settings']" mat-icon-button>
+            <mat-icon>settings</mat-icon>
+        </a>
+        <a [routerLink]="['/feedback']" mat-icon-button>
+            <mat-icon>sentiment_satisfied_alt</mat-icon>
+        </a>
+    </mat-toolbar>
+</p>
+
+
+<router-outlet></router-outlet>

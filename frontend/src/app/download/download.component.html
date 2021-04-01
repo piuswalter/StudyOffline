@@ -1,0 +1,73 @@
+<div class="container">
+  <div *ngIf="!isLoggedIn" class="content">
+    <mat-card class="login-form">
+      <h1 class="mat-headline">StudySmarter Login</h1>
+      <div class="spacer-2x"></div>
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <mat-form-field class="full-width">
+          <input
+            matInput
+            formControlName="username"
+            placeholder="Enter your E-Mail"
+          />
+        </mat-form-field>
+        <div class="spacer"></div>
+        <mat-form-field class="full-width">
+          <input
+            matInput
+            formControlName="password"
+            placeholder="Enter your password"
+            [type]="hide ? 'password' : 'text'"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="hide = !hide"
+          >
+            <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
+          </button>
+        </mat-form-field>
+        <div class="spacer"></div>
+        <button mat-raised-button class="full-width" color="primary">
+          Login
+        </button>
+      </form>
+    </mat-card>
+  </div>
+  <div *ngIf="isLoggedIn" class="content">
+    <mat-card class="login-form">
+      <h1 class="mat-headline">Select subjects for download!</h1>
+      <div class="spacer-2x"></div>
+      <form [formGroup]="subjectForm" (ngSubmit)="downloadSubjects()">
+        <section class="subject-selection">
+          <span
+            formArrayName="subjects"
+            *ngFor="let sb of subjectBoxes.controls; let i = index"
+          >
+            <mat-checkbox
+              [formControlName]="i"
+              color="primary"
+              class="subject-selection-item"
+            >
+              {{ subjects[i].name }}
+            </mat-checkbox>
+            <br />
+          </span>
+        </section>
+        <div class="spacer"></div>
+        <div *ngIf="!!progress" id="loader">
+          <mat-progress-bar
+            mode="determinate"
+            class="full-width"
+            [value]="progress"
+          ></mat-progress-bar>
+          <div class="spacer"></div>
+        </div>
+        <button mat-raised-button class="full-width" color="primary">
+          Download
+        </button>
+      </form>
+    </mat-card>
+  </div>
+</div>
