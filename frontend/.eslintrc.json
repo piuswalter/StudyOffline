@@ -13,7 +13,6 @@
           "tsconfig.json",
           "e2e/tsconfig.json"
         ],
-        "tsconfigRootDir": "./frontend/",
         "createDefaultProgram": true
       },
       "extends": [
