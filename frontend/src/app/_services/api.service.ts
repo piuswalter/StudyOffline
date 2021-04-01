@@ -31,14 +31,14 @@ const handleError = (error: HttpErrorResponse): Observable<never> => {
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  private httpOptions = {};
   private token = '';
   private userId = 0;
 
   constructor(private http: HttpClient) {}
 
-  private updateHeader() {
-    this.httpOptions = {
+  private get httpOptions(): { headers: HttpHeaders } | any {
+    if (!this.token) return {};
+    return {
       headers: new HttpHeaders({
         // eslint-disable-next-line @typescript-eslint/naming-convention
         Authorization: `Token ${this.token}`
@@ -50,7 +50,11 @@ export class ApiService {
     return !!this.userId;
   }
 
-  login(data: LoginRequest, callback: VoidFunction): Subscription {
+  login(
+    data: LoginRequest,
+    save: boolean,
+    callback: VoidFunction
+  ): Subscription {
     const options = {
       headers: new HttpHeaders({
         // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -62,28 +66,47 @@ export class ApiService {
       .post<LoginResponse>(`${environment.apiURL}/login`, data, options)
       .pipe(retry(1), catchError(handleError))
       .subscribe((loginData) => {
-        const { token, id } = loginData;
-        this.token = token;
-        this.userId = id;
-        this.updateHeader();
+        this.saveCredentials(loginData);
         callback();
       });
   }
 
-  private fetchUserEndpoint<T>(endpoint: string) {
-    return this.http
-      .get<StudySmarterResponse<T>>(
-        `${environment.apiURL}/users/${this.userId}/${endpoint}`,
-        this.httpOptions
-      )
-      .pipe(retry(1), catchError(handleError));
+  private saveCredentials(loginData: { token: string; id: number }) {
+    const { token, id } = loginData;
+    this.token = token;
+    this.userId = id;
+    localStorage.setItem('StudySmarterToken', token);
+    localStorage.setItem('StudySmarterUserId', id.toString());
   }
 
-  getSubjects() {
+  loadCredentials(): void {
+    const token = localStorage.getItem('StudySmarterToken');
+    const userId = Number(localStorage.getItem('StudySmarterUserId'));
+    if (token && userId) {
+      this.token = token;
+      this.userId = userId;
+    }
+  }
+
+  private fetchUserEndpoint<T>(
+    endpoint: string
+  ): Observable<StudySmarterResponse<T>> {
+    return ((this.http.get(
+      `${environment.apiURL}/users/${this.userId}/${endpoint}`,
+      this.httpOptions
+    ) as unknown) as Observable<StudySmarterResponse<T>>).pipe(
+      retry(1),
+      catchError(handleError)
+    );
+  }
+
+  getSubjects(): Observable<StudySmarterResponse<Subject>> {
     return this.fetchUserEndpoint<Subject>('subjects');
   }
 
-  getFlashcards(subjectId: number) {
+  getFlashcards(
+    subjectId: number
+  ): Observable<StudySmarterResponse<Flashcard>> {
     return this.fetchUserEndpoint<Flashcard>(
       `subjects/${subjectId}/flashcards`
     );

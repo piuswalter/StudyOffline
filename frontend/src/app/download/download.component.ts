@@ -30,7 +30,8 @@ export class DownloadComponent implements OnInit {
         '',
         [Validators.required.bind(this), Validators.email.bind(this)]
       ],
-      password: ['', Validators.required.bind(this)]
+      password: ['', Validators.required.bind(this)],
+      rememberMe: [false]
     });
     this.subjectForm = this.formBuilder.group({
       subjects: new FormArray([])
@@ -47,11 +48,11 @@ export class DownloadComponent implements OnInit {
     return this.subjectForm.controls;
   }
 
-  get subjectBoxes() {
+  get subjectBoxes(): FormArray {
     return this.sf.subjects as FormArray;
   }
 
-  get isLoggedIn() {
+  get isLoggedIn(): boolean {
     return this.apiService.isLoggedIn;
   }
 
@@ -61,6 +62,7 @@ export class DownloadComponent implements OnInit {
         username: this.f.username.value,
         password: this.f.password.value
       },
+      this.f.rememberMe.value,
       () => {
         this.apiService.getSubjects().subscribe((data) => {
           this.subjects = data.results;

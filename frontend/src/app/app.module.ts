@@ -9,6 +9,7 @@ import { HomeComponent } from './home/home.component';
 import { SettingsComponent } from './settings/settings.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -43,6 +44,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     BrowserAnimationsModule,
     FormsModule,
     HttpClientModule,
+    MatBadgeModule,
     MatButtonModule,
     MatCardModule,
     MatCheckboxModule,

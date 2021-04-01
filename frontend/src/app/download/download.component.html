@@ -28,7 +28,12 @@
             <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
           </button>
         </mat-form-field>
-        <div class="spacer"></div>
+
+          <mat-checkbox formControlName="rememberMe">
+            Remember me
+          </mat-checkbox>
+
+          <div class="spacer"></div>
         <button mat-raised-button class="full-width" color="primary">
           Login
         </button>
@@ -41,7 +46,7 @@
       <div class="spacer-2x"></div>
       <form [formGroup]="subjectForm" (ngSubmit)="downloadSubjects()">
         <section class="subject-selection">
-          <span
+          <span [matBadge]="subjects[i].flashcards" matBadgeOverlap="false"
             formArrayName="subjects"
             *ngFor="let sb of subjectBoxes.controls; let i = index"
           >
@@ -50,7 +55,7 @@
               color="primary"
               class="subject-selection-item"
             >
-              {{ subjects[i].name }}
+              {{ subjects[i].name }}&nbsp;
             </mat-checkbox>
             <br />
           </span>
