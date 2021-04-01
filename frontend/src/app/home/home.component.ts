@@ -1,6 +1,12 @@
-import { AfterViewInit, asNativeElements, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { courses as courseList } from "./test";
-import { FlashCard } from "./flashcard.interface";
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild
+} from '@angular/core';
+import { courses as courseList } from './test';
+import { FlashCard } from './flashcard.interface';
 
 @Component({
   selector: 'app-home',
@@ -11,19 +17,19 @@ export class HomeComponent implements OnInit, AfterViewInit {
   @ViewChild('question') question!: ElementRef<HTMLDivElement>;
   @ViewChild('answer') answer!: ElementRef<HTMLDivElement>;
 
-  course: string = '';
+  course = '';
   courseNames: string[];
-  hideAnswer: boolean = true;
+  hideAnswer = true;
   private cards: FlashCard[] = [];
   private courses: any = courseList;
-  private index: number = 0;
+  private index = 0;
 
   constructor() {
     this.courseNames = Object.keys(courseList);
   }
 
   ngOnInit(): void {}
-  
+
   ngAfterViewInit(): void {
     this.course = this.courseNames ? this.courseNames[0] : '';
     this.changeCourse(this.course);
@@ -36,7 +42,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
   }
 
-  renderCard() {
+  renderCard(): void {
     this.hideAnswer = true;
     if (this.cards[this.index]) {
       const { question, answer } = this.cards[this.index];
@@ -45,16 +51,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
   }
 
-  randomNumber(min: number, max: number): number {  
-    return Math.floor(Math.random() * (max - min) + min); 
+  randomNumber(min: number, max: number): number {
+    return Math.floor(Math.random() * (max - min) + min);
   }
 
-  switchCard(inc: number) {
+  switchCard(inc: number): void {
     const cl = this.cards.length;
     if (!inc) inc = this.randomNumber(1, cl - 1);
     this.index = (this.index + inc) % cl;
     if (this.index < 0) this.index = cl - 1;
     this.renderCard();
   }
-
 }
