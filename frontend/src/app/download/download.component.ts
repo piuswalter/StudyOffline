@@ -1,13 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import {
-  AbstractControl,
   FormArray,
   FormBuilder,
   FormControl,
   FormGroup,
   Validators
 } from '@angular/forms';
-import { AnyAaaaRecord } from 'dns';
 import { Subject } from '../_models';
 import { ApiService } from '../_services/api.service';
 
@@ -28,8 +26,11 @@ export class DownloadComponent implements OnInit {
     private formBuilder: FormBuilder
   ) {
     this.loginForm = this.formBuilder.group({
-      username: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required]
+      username: [
+        '',
+        [Validators.required.bind(this), Validators.email.bind(this)]
+      ],
+      password: ['', Validators.required.bind(this)]
     });
     this.subjectForm = this.formBuilder.group({
       subjects: new FormArray([])

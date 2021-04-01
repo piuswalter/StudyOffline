@@ -1,7 +1,8 @@
 /* eslint-disable camelcase */
 export interface LoginRequest {
-    username: string,
-    password: string,
-    studygroup_token?: string,
-    subjecttoken?: string
+  username: string;
+  password: string;
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  studygroup_token?: string;
+  subjecttoken?: string;
 }

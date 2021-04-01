@@ -14,6 +14,14 @@ Run `ng generate component component-name` to generate a new component. You can 
 
 Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
 
+## Linting
+
+Run `npm run lint` to lint your project using eslint. To find a list of all static exceptions made, enter
+```bash
+grep -l "eslint-disable" `find src -name *.ts`
+```
+to optain a list of all files containing `eslint-disable`
+
 ## Running unit tests
 
 Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
