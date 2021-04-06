@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -15,6 +15,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -24,6 +25,12 @@ import { HelpComponent } from './help/help.component';
 import { DownloadComponent } from './download/download.component';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { StudySmarterLoginComponent } from './study-smarter-login/study-smarter-login.component';
+import { StudySmarterService } from './_services/study-smarter.service';
+
+const initLocalStorage = (studySmarter: StudySmarterService) => {
+  return (): void => studySmarter.loadCredentials();
+};
 
 @NgModule({
   declarations: [
@@ -33,7 +40,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     UploadComponent,
     FeedbackComponent,
     HelpComponent,
-    DownloadComponent
+    DownloadComponent,
+    StudySmarterLoginComponent
   ],
   imports: [
     BrowserModule,
@@ -50,12 +58,20 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MatCheckboxModule,
     MatIconModule,
     MatInputModule,
+    MatListModule,
     MatProgressBarModule,
     MatSelectModule,
     MatToolbarModule,
     ReactiveFormsModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initLocalStorage,
+      deps: [StudySmarterService],
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
