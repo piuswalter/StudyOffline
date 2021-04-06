@@ -7,9 +7,9 @@
       <form [formGroup]="subjectForm" (ngSubmit)="downloadSubjects()">
         <section class="subject-selection">
 
-          <mat-list>
+          <mat-selection-list>
             <div mat-subheader>Active Subjects</div>
-            <mat-list-item *ngFor="let subject of activeSubjects">
+            <mat-list-option *ngFor="let subject of activeSubjects">
               <!-- <mat-icon mat-list-icon>folder</mat-icon> -->
               <div mat-line>
                 <span [matBadge]="subject.flashcards"
@@ -22,12 +22,12 @@
               <div mat-line>
                 <p>Last used: {{ subject.last_used | date }}</p>
               </div>
-            </mat-list-item>
+            </mat-list-option>
 
             <mat-divider></mat-divider>
 
             <div mat-subheader>Archived Subjects</div>
-            <mat-list-item *ngFor="let subject of archivedSubjects">
+            <mat-list-option *ngFor="let subject of archivedSubjects">
               <div mat-line>
                 <span [matBadge]="subject.flashcards"
                       matBadgeOverlap="false">
@@ -39,23 +39,9 @@
               <div mat-line>
                 <p>Last used: {{ subject.last_used | date }}</p>
               </div>
-            </mat-list-item>
-          </mat-list>
+            </mat-list-option>
+          </mat-selection-list>
 
-
-          <!-- <span [matBadge]="subjects[i].flashcards" matBadgeOverlap="false"
-            formArrayName="subjects"
-            *ngFor="let sb of subjectBoxes.controls; let i = index"
-          >
-            <mat-checkbox
-              [formControlName]="i"
-              color="primary"
-              class="subject-selection-item"
-            >
-              {{ subjects[i].name }}&nbsp;
-            </mat-checkbox>
-            <br />
-          </span> -->
         </section>
         <div class="spacer"></div>
         <div *ngIf="!!progress" id="loader">
