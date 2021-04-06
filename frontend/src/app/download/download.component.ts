@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import {
+  AbstractControl,
   FormArray,
   FormBuilder,
   FormControl,
-  FormGroup,
-  Validators
+  FormGroup
 } from '@angular/forms';
 import { Subject } from '../_models';
 import { ApiService } from '../_services/api.service';
@@ -16,35 +16,25 @@ import { ApiService } from '../_services/api.service';
 })
 export class DownloadComponent implements OnInit {
   hide = true;
-  loginForm: FormGroup;
   subjectForm: FormGroup;
-  subjects: Subject[] = [];
+  private subjects: Subject[] = [];
   progress = 90;
 
   constructor(
     private apiService: ApiService,
     private formBuilder: FormBuilder
   ) {
-    this.loginForm = this.formBuilder.group({
-      username: [
-        '',
-        [Validators.required.bind(this), Validators.email.bind(this)]
-      ],
-      password: ['', Validators.required.bind(this)],
-      rememberMe: [false]
-    });
     this.subjectForm = this.formBuilder.group({
-      subjects: new FormArray([])
+      activeSubjects: new FormArray([]),
+      archivedSubjects: new FormArray([])
     });
   }
 
-  ngOnInit(): void {}
-
-  get f() {
-    return this.loginForm.controls;
+  ngOnInit(): void {
+    this.fetchSubjects();
   }
 
-  get sf() {
+  get sf(): { [key: string]: AbstractControl } {
     return this.subjectForm.controls;
   }
 
@@ -52,26 +42,21 @@ export class DownloadComponent implements OnInit {
     return this.sf.subjects as FormArray;
   }
 
-  get isLoggedIn(): boolean {
-    return this.apiService.isLoggedIn;
+  get activeSubjects(): Subject[] {
+    return this.subjects.filter((subject) => !subject.archived);
+  }
+  get archivedSubjects(): Subject[] {
+    return this.subjects.filter((subject) => subject.archived);
   }
 
-  onSubmit(): void {
-    this.apiService.login(
-      {
-        username: this.f.username.value,
-        password: this.f.password.value
-      },
-      this.f.rememberMe.value,
-      () => {
-        this.apiService.getSubjects().subscribe((data) => {
-          this.subjects = data.results;
-          this.subjects.forEach(() =>
-            this.subjectBoxes.push(new FormControl(false))
-          );
-        });
-      }
-    );
+  fetchSubjects(): void {
+    this.apiService.getSubjects().subscribe((data) => {
+      this.subjects = data.results;
+
+      this.subjects.forEach(() =>
+        this.subjectBoxes.push(new FormControl(false))
+      );
+    });
   }
 
   downloadSubjects(): void {

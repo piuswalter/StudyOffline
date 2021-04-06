@@ -1,52 +1,49 @@
 <div class="container">
-  <div *ngIf="!isLoggedIn" class="content">
-    <mat-card class="login-form">
-      <h1 class="mat-headline">StudySmarter Login</h1>
-      <div class="spacer-2x"></div>
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        <mat-form-field class="full-width">
-          <input
-            matInput
-            formControlName="username"
-            placeholder="Enter your E-Mail"
-          />
-        </mat-form-field>
-        <div class="spacer"></div>
-        <mat-form-field class="full-width">
-          <input
-            matInput
-            formControlName="password"
-            placeholder="Enter your password"
-            [type]="hide ? 'password' : 'text'"
-          />
-          <button
-            mat-icon-button
-            matSuffix
-            type="button"
-            (click)="hide = !hide"
-          >
-            <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
-          </button>
-        </mat-form-field>
 
-          <mat-checkbox formControlName="rememberMe">
-            Remember me
-          </mat-checkbox>
-
-          <div class="spacer"></div>
-        <button mat-raised-button class="full-width" color="primary">
-          Login
-        </button>
-      </form>
-    </mat-card>
-  </div>
-  <div *ngIf="isLoggedIn" class="content">
-    <mat-card class="login-form">
+  <div class="content">
+    <mat-card >
       <h1 class="mat-headline">Select subjects for download!</h1>
       <div class="spacer-2x"></div>
       <form [formGroup]="subjectForm" (ngSubmit)="downloadSubjects()">
         <section class="subject-selection">
-          <span [matBadge]="subjects[i].flashcards" matBadgeOverlap="false"
+
+          <mat-list>
+            <div mat-subheader>Active Subjects</div>
+            <mat-list-item *ngFor="let subject of activeSubjects">
+              <!-- <mat-icon mat-list-icon>folder</mat-icon> -->
+              <div mat-line>
+                <span [matBadge]="subject.flashcards"
+                      matBadgeOverlap="false">
+                      <mat-checkbox color="primary" class="subject-selection-item">
+                        {{ subject.name }}
+                      </mat-checkbox>
+                  </span>
+              </div>
+              <div mat-line>
+                <p>Last used: {{ subject.last_used | date }}</p>
+              </div>
+            </mat-list-item>
+
+            <mat-divider></mat-divider>
+
+            <div mat-subheader>Archived Subjects</div>
+            <mat-list-item *ngFor="let subject of archivedSubjects">
+              <div mat-line>
+                <span [matBadge]="subject.flashcards"
+                      matBadgeOverlap="false">
+                      <mat-checkbox color="primary" class="subject-selection-item">
+                        {{ subject.name }}
+                      </mat-checkbox>
+                  </span>
+              </div>
+              <div mat-line>
+                <p>Last used: {{ subject.last_used | date }}</p>
+              </div>
+            </mat-list-item>
+          </mat-list>
+
+
+          <!-- <span [matBadge]="subjects[i].flashcards" matBadgeOverlap="false"
             formArrayName="subjects"
             *ngFor="let sb of subjectBoxes.controls; let i = index"
           >
@@ -58,7 +55,7 @@
               {{ subjects[i].name }}&nbsp;
             </mat-checkbox>
             <br />
-          </span>
+          </span> -->
         </section>
         <div class="spacer"></div>
         <div *ngIf="!!progress" id="loader">
