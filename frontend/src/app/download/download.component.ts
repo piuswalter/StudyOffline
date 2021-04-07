@@ -27,6 +27,29 @@ export class DownloadComponent implements OnInit {
     return this.subjects.filter((subject) => subject.archived);
   }
 
+  /**
+   * maps array of checkbox objects to IDs of selected subjects
+   */
+  get selectedSubjectIds(): number[] {
+    if (!this.subjectList) return [];
+    return this.subjectList.selectedOptions.selected.map(
+      (obj) => obj.value as number
+    );
+  }
+
+  /**
+   * Add up flashcard count of all selected subjects
+   *
+   * @param selected - List of IDs of the subjects you want to count
+   * @returns - The total flashcard count of all selected subjects
+   */
+  getFlashcardCount(selected: number[]): number {
+    return this.subjects.reduce(
+      (acc, sub) => (selected.includes(sub.id) ? acc + sub.flashcards : acc),
+      0
+    );
+  }
+
   fetchSubjects(): void {
     this.apiService.getSubjects().subscribe((data) => {
       this.subjects = data.results;
@@ -36,18 +59,7 @@ export class DownloadComponent implements OnInit {
   downloadSubjects(): void {
     if (!this.subjectList) return;
 
-    // map array of checkbox objects to IDs of selected subjects
-    const selectedIds = this.subjectList.selectedOptions.selected.map(
-      (obj) => obj.value as number
-    );
-
-    // add up flashcard count of all selected subjects
-    const flashcardCount = this.subjects.reduce(
-      (acc, sub) => (selectedIds.includes(sub.id) ? acc + sub.flashcards : acc),
-      0
-    );
-
-    for (const subjectId of selectedIds) {
+    for (const subjectId of this.selectedSubjectIds) {
       this.apiService.getFlashcards(subjectId).subscribe((flashcards) => {
         const answr = flashcards.results[0].flashcardinfo.answer_html[0].text;
         // images are decoding within backend!

@@ -17,7 +17,8 @@
           </mat-selection-list>
 
           <p>
-            Options selected: {{subjectList.selectedOptions.selected.length}}
+            You've selected {{ subjectList.selectedOptions.selected.length }} Subjects
+            containing {{ getFlashcardCount(selectedSubjectIds) }} Flashcards
           </p>
 
         </section>
