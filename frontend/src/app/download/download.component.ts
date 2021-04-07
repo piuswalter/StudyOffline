@@ -19,11 +19,21 @@ export class DownloadComponent implements OnInit {
     this.fetchSubjects();
   }
 
+  private cmpSubjectLastUsed(a: Subject, b: Subject) {
+    return new Date(b.last_used).getTime() - new Date(a.last_used).getTime();
+  }
+
+  private filteredSubjects(active: boolean): Subject[] {
+    return this.subjects
+      .filter((subject) => subject.archived !== active)
+      .sort(this.cmpSubjectLastUsed.bind(this));
+  }
+
   get activeSubjects(): Subject[] {
-    return this.subjects.filter((subject) => !subject.archived);
+    return this.filteredSubjects(true);
   }
   get archivedSubjects(): Subject[] {
-    return this.subjects.filter((subject) => subject.archived);
+    return this.filteredSubjects(false);
   }
 
   /**
