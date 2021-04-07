@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatSelectionList } from '@angular/material/list';
 import { Subject } from '../_models';
 import { ApiService } from '../_services/api.service';
@@ -10,7 +10,6 @@ import { ApiService } from '../_services/api.service';
 })
 export class DownloadComponent implements OnInit {
   @ViewChild('subjectList') subjectList: MatSelectionList | undefined;
-  @ViewChild('encoder') encoder: ElementRef<HTMLDivElement> | undefined;
   private subjects: Subject[] = [];
   progress = 90;
 
@@ -57,12 +56,10 @@ export class DownloadComponent implements OnInit {
   }
 
   downloadSubjects(): void {
-    if (!this.subjectList) return;
-
     for (const subjectId of this.selectedSubjectIds) {
       this.apiService.getFlashcards(subjectId).subscribe((flashcards) => {
         const answr = flashcards.results[0].flashcardinfo.answer_html[0].text;
-        // images are decoding within backend!
+        // images are now encoded within backend!
         console.log(answr);
       });
     }
