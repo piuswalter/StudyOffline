@@ -1,61 +1,34 @@
 <div class="container">
 
   <div class="content">
-    <mat-card >
+    <mat-card>
       <h1 class="mat-headline">Select subjects for download!</h1>
       <div class="spacer-2x"></div>
-      <form [formGroup]="subjectForm" (ngSubmit)="downloadSubjects()">
         <section class="subject-selection">
 
-          <mat-selection-list>
+          <mat-selection-list #subjectList>
             <div mat-subheader>Active Subjects</div>
-            <mat-list-option *ngFor="let subject of activeSubjects">
-              <!-- <mat-icon mat-list-icon>folder</mat-icon> -->
-              <div mat-line>
-                <span [matBadge]="subject.flashcards"
-                      matBadgeOverlap="false">
-                      <mat-checkbox color="primary" class="subject-selection-item">
-                        {{ subject.name }}
-                      </mat-checkbox>
-                  </span>
-              </div>
-              <div mat-line>
-                <p>Last used: {{ subject.last_used | date }}</p>
-              </div>
-            </mat-list-option>
+            <app-subject-selector *ngFor="let subject of activeSubjects" [subject]="subject"></app-subject-selector>
 
             <mat-divider></mat-divider>
 
             <div mat-subheader>Archived Subjects</div>
-            <mat-list-option *ngFor="let subject of archivedSubjects">
-              <div mat-line>
-                <span [matBadge]="subject.flashcards"
-                      matBadgeOverlap="false">
-                      <mat-checkbox color="primary" class="subject-selection-item">
-                        {{ subject.name }}
-                      </mat-checkbox>
-                  </span>
-              </div>
-              <div mat-line>
-                <p>Last used: {{ subject.last_used | date }}</p>
-              </div>
-            </mat-list-option>
+            <app-subject-selector *ngFor="let subject of archivedSubjects" [subject]="subject"></app-subject-selector>
           </mat-selection-list>
+
+          <p>
+            Options selected: {{subjectList.selectedOptions.selected.length}}
+          </p>
 
         </section>
         <div class="spacer"></div>
         <div *ngIf="!!progress" id="loader">
-          <mat-progress-bar
-            mode="determinate"
-            class="full-width"
-            [value]="progress"
-          ></mat-progress-bar>
+          <mat-progress-bar mode="determinate" class="full-width" [value]="progress"></mat-progress-bar>
           <div class="spacer"></div>
         </div>
-        <button mat-raised-button class="full-width" color="primary">
+        <button mat-raised-button (click)="downloadSubjects()" class="full-width" color="primary">
           Download
         </button>
-      </form>
     </mat-card>
   </div>
 </div>

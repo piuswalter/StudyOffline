@@ -27,6 +27,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { StudySmarterLoginComponent } from './study-smarter-login/study-smarter-login.component';
 import { StudySmarterService } from './_services/study-smarter.service';
+import { SubjectSelectorComponent } from './download/subject-selector/subject-selector.component';
 
 const initLocalStorage = (studySmarter: StudySmarterService) => {
   return (): void => studySmarter.loadCredentials();
@@ -41,7 +42,8 @@ const initLocalStorage = (studySmarter: StudySmarterService) => {
     FeedbackComponent,
     HelpComponent,
     DownloadComponent,
-    StudySmarterLoginComponent
+    StudySmarterLoginComponent,
+    SubjectSelectorComponent
   ],
   imports: [
     BrowserModule,
