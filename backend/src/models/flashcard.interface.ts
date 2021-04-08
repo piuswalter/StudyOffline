@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-interface FlashcardAnswer {
+export interface FlashcardAnswer {
   text: string,
   is_correct: boolean
 }
