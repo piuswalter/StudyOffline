@@ -15,12 +15,16 @@ export async function getSubjects(req: Request, res: Response, next: NextFunctio
 }
 
 async function encodeHtmlImages(text: string) {
-  const raw = cheerio.load(text);
+  const raw = cheerio.load(text || '');
   // eslint-disable-next-line no-restricted-syntax
   for (const img of raw('img').get()) {
-    // eslint-disable-next-line no-await-in-loop
-    const enc: string = await imageDataURI.encodeFromURL(img.attribs.src);
-    img.attribs.src = enc;
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      const enc: string = await imageDataURI.encodeFromURL(img.attribs.src);
+      img.attribs.src = enc;
+    } catch (err) {
+      console.error(err);
+    }
   }
   return raw.html();
 }
@@ -41,7 +45,7 @@ async function encodeFlashcard(flashcard: Flashcard): Promise<void> {
   ] = await Promise.all([
     Promise.all(flashcard.flashcardinfo.question_html.map((answr) => encodeAnswer(answr))),
     Promise.all(flashcard.flashcardinfo.answer_html.map((answr) => encodeAnswer(answr))),
-    Promise.all(flashcard.flashcardinfo.hint_html.map((answr) => encodeAnswer(answr))),
+    Promise.all(flashcard.flashcardinfo.hint_html.map((answr) => encodeHtmlImages(answr))),
     encodeHtmlImages(flashcard.flashcardinfo.solution_html),
   ]);
 
@@ -58,12 +62,11 @@ async function encodeFlashcard(flashcard: Flashcard): Promise<void> {
   // }
 
   // // eslint-disable-next-line no-restricted-syntax
-  // for (const hint of flashcard.flashcardinfo.hint_html) {
+  // for (let hint of flashcard.flashcardinfo.hint_html) {
   //   // eslint-disable-next-line no-await-in-loop
-  //   hint.text = await encodeHtmlImages(hint.text);
+  //   hint = await encodeHtmlImages(hint);
   // }
 
-  // // eslint-disable-next-line no-await-in-loop
   // // eslint-disable-next-line no-param-reassign
   // flashcard.flashcardinfo.solution_html = await encodeHtmlImages(
   //   flashcard.flashcardinfo.solution_html,
