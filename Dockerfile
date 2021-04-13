@@ -17,7 +17,7 @@ WORKDIR /app
 RUN rm -r /tmp/backend /tmp/frontend
 
 ENV NODE_ENV=production
-COPY backend/package*.json .
+COPY backend/package*.json ./
 RUN npm ci
 
 CMD ["node", "./src/app.js"]
