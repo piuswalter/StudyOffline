@@ -1,12 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import {
-  FormArray,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators
-} from '@angular/forms';
-import { Subject } from '../_models';
+import { HttpEvent, HttpEventType } from '@angular/common/http';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatSelectionList } from '@angular/material/list';
+import { last, map } from 'rxjs/operators';
+import { Flashcard, Subject } from '../_models';
 import { ApiService } from '../_services/api.service';
 
 @Component({
@@ -15,69 +11,93 @@ import { ApiService } from '../_services/api.service';
   styleUrls: ['./download.component.sass']
 })
 export class DownloadComponent implements OnInit {
-  hide = true;
-  loginForm: FormGroup;
-  subjectForm: FormGroup;
-  subjects: Subject[] = [];
-  progress = 90;
+  @ViewChild('subjectList') subjectList: MatSelectionList | undefined;
+  private subjects: Subject[] = [];
+  progress = 0;
 
-  constructor(
-    private apiService: ApiService,
-    private formBuilder: FormBuilder
-  ) {
-    this.loginForm = this.formBuilder.group({
-      username: [
-        '',
-        [Validators.required.bind(this), Validators.email.bind(this)]
-      ],
-      password: ['', Validators.required.bind(this)]
-    });
-    this.subjectForm = this.formBuilder.group({
-      subjects: new FormArray([])
-    });
+  constructor(private apiService: ApiService) {}
+
+  ngOnInit(): void {
+    this.fetchSubjects();
   }
 
-  ngOnInit(): void {}
-
-  get f() {
-    return this.loginForm.controls;
+  private cmpSubjectLastUsed(a: Subject, b: Subject) {
+    return new Date(b.last_used).getTime() - new Date(a.last_used).getTime();
   }
 
-  get sf() {
-    return this.subjectForm.controls;
+  private filteredSubjects(active: boolean): Subject[] {
+    return this.subjects
+      .filter((subject) => subject.archived !== active)
+      .sort(this.cmpSubjectLastUsed.bind(this));
   }
 
-  get subjectBoxes() {
-    return this.sf.subjects as FormArray;
+  get activeSubjects(): Subject[] {
+    return this.filteredSubjects(true);
+  }
+  get archivedSubjects(): Subject[] {
+    return this.filteredSubjects(false);
   }
 
-  get isLoggedIn() {
-    return this.apiService.isLoggedIn;
-  }
-
-  onSubmit(): void {
-    this.apiService.login(
-      {
-        username: this.f.username.value,
-        password: this.f.password.value
-      },
-      () => {
-        this.apiService.getSubjects().subscribe((data) => {
-          this.subjects = data.results;
-          this.subjects.forEach(() =>
-            this.subjectBoxes.push(new FormControl(false))
-          );
-        });
-      }
+  /**
+   * maps array of checkbox objects to IDs of selected subjects
+   */
+  get selectedSubjectIds(): number[] {
+    if (!this.subjectList) return [];
+    return this.subjectList.selectedOptions.selected.map(
+      (obj) => obj.value as number
     );
   }
 
+  /**
+   * Add up flashcard count of all selected subjects
+   *
+   * @param selected - List of IDs of the subjects you want to count
+   * @returns - The total flashcard count of all selected subjects
+   */
+  getFlashcardCount(selected: number[]): number {
+    return this.subjects.reduce(
+      (acc, sub) => (selected.includes(sub.id) ? acc + sub.flashcards : acc),
+      0
+    );
+  }
+
+  fetchSubjects(): void {
+    this.apiService.getSubjects().subscribe((data) => {
+      this.subjects = data.results;
+    });
+  }
+
   downloadSubjects(): void {
-    const selectedSubjects = this.subjectForm.value.subjects
-      .map((checked: boolean, i: number) =>
-        checked ? this.subjects[i].id : null
-      )
-      .filter((v: number | undefined) => v !== null);
-    this.progress = 0.1;
+    const toFetch =
+      this.getFlashcardCount(this.selectedSubjectIds) +
+      this.selectedSubjectIds.length;
+    let fetched = 0;
+
+    for (const subjectId of this.selectedSubjectIds) {
+      let subjectFetched = 0;
+      this.apiService
+        .getFlashcards(subjectId)
+        .pipe(
+          map((card: HttpEvent<Flashcard>) => {
+            if (card.type === HttpEventType.DownloadProgress) {
+              this.progress = (100 / toFetch) * ++fetched;
+              subjectFetched++;
+            }
+            return card;
+          }),
+          last()
+        )
+        .subscribe((flashcards) => {
+          fetched += this.getFlashcardCount([subjectId]) - subjectFetched;
+          this.progress = (100 / toFetch) * ++fetched;
+          console.log('Final flashcards: ', flashcards);
+          // flashcards.map((card) => console.log('test'));
+          // console.log(flashcards.length);
+          // const answr = flashcards.results[0].flashcardinfo.answer_html[0].text;
+          // // images are now encoded within backend!
+          // console.log(answr);
+        });
+      // this.apiService.getFlashcards2(subjectId).subscribe(data => console.log);
+    }
   }
 }

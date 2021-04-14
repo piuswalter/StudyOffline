@@ -1,5 +1,5 @@
 import {
-  Express, NextFunction, Request, Response,
+  Express, NextFunction, Request, Response, static as expressStatic,
 } from 'express';
 import bodyParser from 'body-parser';
 import { HttpError, NotFoundError } from '../errors';
@@ -14,6 +14,10 @@ export default (app: Express) => {
   const { docs, prefix } = config.system.api;
   app.use(docs, docRoutes());
   app.use(prefix, routes());
+
+  // Load static frontend and enable routing
+  app.use(expressStatic(`${__dirname}/../frontend`));
+  app.use('/*', expressStatic(`${__dirname}/../frontend`));
 
   // catch 404 error and forward to handler
   app.use(({ path }: Request, res: Response, next: NextFunction) => {

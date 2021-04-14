@@ -1,9 +1,11 @@
 import {
   HttpClient,
   HttpErrorResponse,
-  HttpHeaders
+  HttpEvent,
+  HttpHeaders,
+  HttpRequest
 } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { throwError } from 'rxjs/internal/observable/throwError';
 import { retry, catchError } from 'rxjs/operators';
@@ -15,6 +17,7 @@ import {
   StudySmarterResponse,
   Subject
 } from '../_models';
+import { StudySmarterService } from './study-smarter.service';
 
 const handleError = (error: HttpErrorResponse): Observable<never> => {
   let errorMessage = '';
@@ -31,26 +34,23 @@ const handleError = (error: HttpErrorResponse): Observable<never> => {
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  private httpOptions = {};
-  private token = '';
-  private userId = 0;
+  constructor(
+    private http: HttpClient,
+    private studySmarter: StudySmarterService,
+    private zone: NgZone
+  ) {}
 
-  constructor(private http: HttpClient) {}
-
-  private updateHeader() {
-    this.httpOptions = {
+  private get httpOptions(): { headers: HttpHeaders } | any {
+    if (!this.studySmarter.apiToken) return {};
+    return {
       headers: new HttpHeaders({
         // eslint-disable-next-line @typescript-eslint/naming-convention
-        Authorization: `Token ${this.token}`
+        Authorization: `Token ${this.studySmarter.apiToken}`
       })
     };
   }
 
-  get isLoggedIn(): boolean {
-    return !!this.userId;
-  }
-
-  login(data: LoginRequest, callback: VoidFunction): Subscription {
+  login(data: LoginRequest, save: boolean, callback = () => {}): Subscription {
     const options = {
       headers: new HttpHeaders({
         // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -62,30 +62,44 @@ export class ApiService {
       .post<LoginResponse>(`${environment.apiURL}/login`, data, options)
       .pipe(retry(1), catchError(handleError))
       .subscribe((loginData) => {
-        const { token, id } = loginData;
-        this.token = token;
-        this.userId = id;
-        this.updateHeader();
+        this.studySmarter.saveCredentials(loginData, save);
         callback();
       });
   }
 
-  private fetchUserEndpoint<T>(endpoint: string) {
-    return this.http
-      .get<StudySmarterResponse<T>>(
-        `${environment.apiURL}/users/${this.userId}/${endpoint}`,
-        this.httpOptions
-      )
-      .pipe(retry(1), catchError(handleError));
+  private getApiUrl(endpoint: string): string {
+    return `${environment.apiURL}/users/${this.studySmarter.userId}/${endpoint}`;
   }
 
-  getSubjects() {
+  private fetchUserEndpoint<T>(
+    endpoint: string
+  ): Observable<StudySmarterResponse<T>> {
+    return ((this.http.get(
+      this.getApiUrl(endpoint),
+      this.httpOptions
+    ) as unknown) as Observable<StudySmarterResponse<T>>).pipe(
+      retry(1),
+      catchError(handleError)
+    );
+  }
+
+  private fetchUserProgressEndpoint<T>(
+    endpoint: string
+  ): Observable<HttpEvent<T>> {
+    return this.http.request<T>(
+      new HttpRequest('GET', this.getApiUrl(endpoint), {
+        ...this.httpOptions,
+        reportProgress: true,
+        observe: 'events'
+      })
+    );
+  }
+
+  getSubjects(): Observable<StudySmarterResponse<Subject>> {
     return this.fetchUserEndpoint<Subject>('subjects');
   }
 
-  getFlashcards(subjectId: number) {
-    return this.fetchUserEndpoint<Flashcard>(
-      `subjects/${subjectId}/flashcards`
-    );
+  getFlashcards(subjectId: number): Observable<HttpEvent<Flashcard>> {
+    return this.fetchUserProgressEndpoint(`subjects/${subjectId}/flashcards`);
   }
 }
