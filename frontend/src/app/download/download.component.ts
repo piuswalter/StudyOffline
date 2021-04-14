@@ -1,8 +1,9 @@
+import { HttpEvent, HttpEventType } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSelectionList } from '@angular/material/list';
-import { Observable } from 'rxjs';
-import { Subject } from '../_models';
+import { last, map } from 'rxjs/operators';
+import { Flashcard, Subject } from '../_models';
 import { ApiService } from '../_services/api.service';
 import { ProgressSpinnerDialogComponent } from './progress-spinner-dialog/progress-spinner-dialog.component';
 
@@ -15,6 +16,7 @@ export class DownloadComponent implements OnInit {
   @ViewChild('subjectList') subjectList: MatSelectionList | undefined;
   private subjects: Subject[] = [];
   progress = 0;
+
   constructor(private apiService: ApiService, private dialog: MatDialog) {}
 
   ngOnInit(): void {
@@ -69,15 +71,37 @@ export class DownloadComponent implements OnInit {
 
   downloadSubjects(): void {
     const dialogRef = this.showProgressSpinnerUntilExecuted();
+    const toFetch =
+      this.getFlashcardCount(this.selectedSubjectIds) +
+      this.selectedSubjectIds.length;
+    let fetched = 0;
 
     for (const subjectId of this.selectedSubjectIds) {
-      this.apiService.getFlashcards(subjectId).subscribe((flashcards) => {
-        const answr = flashcards.results[0].flashcardinfo.answer_html[0].text;
-        // images are now encoded within backend!
-        console.log(answr);
-      });
+      let subjectFetched = 0;
+      this.apiService
+        .getFlashcards(subjectId)
+        .pipe(
+          map((card: HttpEvent<Flashcard>) => {
+            if (card.type === HttpEventType.DownloadProgress) {
+              this.progress = (100 / toFetch) * ++fetched;
+              subjectFetched++;
+            }
+            return card;
+          }),
+          last()
+        )
+        .subscribe((flashcards) => {
+          fetched += this.getFlashcardCount([subjectId]) - subjectFetched;
+          this.progress = (100 / toFetch) * ++fetched;
+          console.log('Final flashcards: ', flashcards);
+          // flashcards.map((card) => console.log('test'));
+          // console.log(flashcards.length);
+          // const answr = flashcards.results[0].flashcardinfo.answer_html[0].text;
+          // // images are now encoded within backend!
+          // console.log(answr);
+        });
+      // this.apiService.getFlashcards2(subjectId).subscribe(data => console.log);
     }
-    this.progress = 0.1;
   }
 
   showProgressSpinnerUntilExecuted(): MatDialogRef<any, any> {
