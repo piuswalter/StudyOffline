@@ -1,9 +1,11 @@
 import {
   HttpClient,
   HttpErrorResponse,
-  HttpHeaders
+  HttpEvent,
+  HttpHeaders,
+  HttpRequest
 } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { throwError } from 'rxjs/internal/observable/throwError';
 import { retry, catchError } from 'rxjs/operators';
@@ -34,7 +36,8 @@ const handleError = (error: HttpErrorResponse): Observable<never> => {
 export class ApiService {
   constructor(
     private http: HttpClient,
-    private studySmarter: StudySmarterService
+    private studySmarter: StudySmarterService,
+    private zone: NgZone
   ) {}
 
   private get httpOptions(): { headers: HttpHeaders } | any {
@@ -64,11 +67,15 @@ export class ApiService {
       });
   }
 
+  private getApiUrl(endpoint: string): string {
+    return `${environment.apiURL}/users/${this.studySmarter.userId}/${endpoint}`;
+  }
+
   private fetchUserEndpoint<T>(
     endpoint: string
   ): Observable<StudySmarterResponse<T>> {
     return ((this.http.get(
-      `${environment.apiURL}/users/${this.studySmarter.userId}/${endpoint}`,
+      this.getApiUrl(endpoint),
       this.httpOptions
     ) as unknown) as Observable<StudySmarterResponse<T>>).pipe(
       retry(1),
@@ -76,15 +83,23 @@ export class ApiService {
     );
   }
 
+  private fetchUserProgressEndpoint<T>(
+    endpoint: string
+  ): Observable<HttpEvent<T>> {
+    return this.http.request<T>(
+      new HttpRequest('GET', this.getApiUrl(endpoint), {
+        ...this.httpOptions,
+        reportProgress: true,
+        observe: 'events'
+      })
+    );
+  }
+
   getSubjects(): Observable<StudySmarterResponse<Subject>> {
     return this.fetchUserEndpoint<Subject>('subjects');
   }
 
-  getFlashcards(
-    subjectId: number
-  ): Observable<StudySmarterResponse<Flashcard>> {
-    return this.fetchUserEndpoint<Flashcard>(
-      `subjects/${subjectId}/flashcards`
-    );
+  getFlashcards(subjectId: number): Observable<HttpEvent<Flashcard>> {
+    return this.fetchUserProgressEndpoint(`subjects/${subjectId}/flashcards`);
   }
 }
