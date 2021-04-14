@@ -1,4 +1,9 @@
-import { Component, Input } from '@angular/core';
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+
+interface DialogData {
+  mode: 'determinate' | 'indeterminate';
+}
 
 @Component({
   selector: 'app-progress-spinner-dialog',
@@ -6,8 +11,7 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./progress-spinner-dialog.component.sass']
 })
 export class ProgressSpinnerDialogComponent {
-  @Input() mode!: 'determinate' | 'indeterminate';
-  @Input() progress!: number;
+  progress = 1;
 
-  constructor() {}
+  constructor(@Inject(MAT_DIALOG_DATA) public data: DialogData) {}
 }

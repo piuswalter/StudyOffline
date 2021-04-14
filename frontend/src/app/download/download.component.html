@@ -27,14 +27,6 @@
         </p>
       </section>
       <div class="spacer"></div>
-      <div *ngIf="!!progress" id="loader">
-        <mat-progress-bar
-          mode="determinate"
-          class="full-width"
-          [value]="progress"
-        ></mat-progress-bar>
-        <div class="spacer"></div>
-      </div>
       <button
         mat-raised-button
         (click)="downloadSubjects()"

@@ -3,7 +3,7 @@
   <mat-progress-spinner
     class="progress-spinner"
     color="accent"
-    [mode]="mode"
+    [mode]="data.mode || 'indeterminate'"
     [value]="progress"
   >
   </mat-progress-spinner>
