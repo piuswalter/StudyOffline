@@ -1,35 +1,48 @@
 <div class="container">
-
   <div class="content">
     <mat-card>
       <h1 class="mat-headline">Select subjects for download!</h1>
       <div class="spacer-2x"></div>
-        <section class="subject-selection">
+      <section class="subject-selection">
+        <mat-selection-list #subjectList>
+          <div mat-subheader>Active Subjects</div>
+          <app-subject-selector
+            *ngFor="let subject of activeSubjects"
+            [subject]="subject"
+          ></app-subject-selector>
 
-          <mat-selection-list #subjectList>
-            <div mat-subheader>Active Subjects</div>
-            <app-subject-selector *ngFor="let subject of activeSubjects" [subject]="subject"></app-subject-selector>
+          <mat-divider></mat-divider>
 
-            <mat-divider></mat-divider>
+          <div mat-subheader>Archived Subjects</div>
+          <app-subject-selector
+            *ngFor="let subject of archivedSubjects"
+            [subject]="subject"
+          ></app-subject-selector>
+        </mat-selection-list>
 
-            <div mat-subheader>Archived Subjects</div>
-            <app-subject-selector *ngFor="let subject of archivedSubjects" [subject]="subject"></app-subject-selector>
-          </mat-selection-list>
-
-          <p>
-            You've selected {{ subjectList.selectedOptions.selected.length }} Subjects
-            containing {{ getFlashcardCount(selectedSubjectIds) }} Flashcards
-          </p>
-
-        </section>
+        <p>
+          You've selected
+          {{ subjectList.selectedOptions.selected.length }} Subjects containing
+          {{ getFlashcardCount(selectedSubjectIds) }} Flashcards
+        </p>
+      </section>
+      <div class="spacer"></div>
+      <div *ngIf="!!progress" id="loader">
+        <mat-progress-bar
+          mode="determinate"
+          class="full-width"
+          [value]="progress"
+        ></mat-progress-bar>
         <div class="spacer"></div>
-        <div *ngIf="!!progress" id="loader">
-          <mat-progress-bar mode="determinate" class="full-width" [value]="progress"></mat-progress-bar>
-          <div class="spacer"></div>
-        </div>
-        <button mat-raised-button (click)="downloadSubjects()" class="full-width" color="primary">
-          Download
-        </button>
+      </div>
+      <button
+        mat-raised-button
+        (click)="downloadSubjects()"
+        class="full-width"
+        color="primary"
+      >
+        Download
+      </button>
     </mat-card>
   </div>
 </div>
