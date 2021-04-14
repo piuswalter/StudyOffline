@@ -13,10 +13,12 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { UploadComponent } from './upload/upload.component';
@@ -28,6 +30,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { StudySmarterLoginComponent } from './study-smarter-login/study-smarter-login.component';
 import { StudySmarterService } from './_services/study-smarter.service';
 import { SubjectSelectorComponent } from './download/subject-selector/subject-selector.component';
+import { ProgressSpinnerDialogComponent } from './download/progress-spinner-dialog/progress-spinner-dialog.component';
 
 const initLocalStorage = (studySmarter: StudySmarterService) => {
   return (): void => studySmarter.loadCredentials();
@@ -43,7 +46,8 @@ const initLocalStorage = (studySmarter: StudySmarterService) => {
     HelpComponent,
     DownloadComponent,
     StudySmarterLoginComponent,
-    SubjectSelectorComponent
+    SubjectSelectorComponent,
+    ProgressSpinnerDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -58,10 +62,12 @@ const initLocalStorage = (studySmarter: StudySmarterService) => {
     MatButtonModule,
     MatCardModule,
     MatCheckboxModule,
+    MatDialogModule,
     MatIconModule,
     MatInputModule,
     MatListModule,
     MatProgressBarModule,
+    MatProgressSpinnerModule,
     MatSelectModule,
     MatToolbarModule,
     ReactiveFormsModule

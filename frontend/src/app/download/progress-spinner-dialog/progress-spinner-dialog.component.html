@@ -1,0 +1,19 @@
+<h2 mat-dialog-title>Download ...</h2>
+<mat-dialog-content class="mat-typography">
+  <mat-progress-spinner
+    class="progress-spinner"
+    color="accent"
+    [mode]="mode"
+    [value]="progress"
+  >
+  </mat-progress-spinner>
+  <div class="spacer-2x"></div>
+  <h3>We download your selected Subject flashcards</h3>
+  <p>
+    Getting subjects, downloading flashcards and encoding images for local
+    readability ...
+  </p>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+</mat-dialog-actions>

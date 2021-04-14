@@ -1,9 +1,11 @@
 import { HttpEvent, HttpEventType } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSelectionList } from '@angular/material/list';
 import { last, map } from 'rxjs/operators';
 import { Flashcard, Subject } from '../_models';
 import { ApiService } from '../_services/api.service';
+import { ProgressSpinnerDialogComponent } from './progress-spinner-dialog/progress-spinner-dialog.component';
 
 @Component({
   selector: 'app-download',
@@ -15,7 +17,7 @@ export class DownloadComponent implements OnInit {
   private subjects: Subject[] = [];
   progress = 0;
 
-  constructor(private apiService: ApiService) {}
+  constructor(private apiService: ApiService, private dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.fetchSubjects();
@@ -68,6 +70,7 @@ export class DownloadComponent implements OnInit {
   }
 
   downloadSubjects(): void {
+    const dialogRef = this.showProgressSpinnerUntilExecuted();
     const toFetch =
       this.getFlashcardCount(this.selectedSubjectIds) +
       this.selectedSubjectIds.length;
@@ -99,5 +102,12 @@ export class DownloadComponent implements OnInit {
         });
       // this.apiService.getFlashcards2(subjectId).subscribe(data => console.log);
     }
+  }
+
+  showProgressSpinnerUntilExecuted(): MatDialogRef<any, any> {
+    return this.dialog.open(ProgressSpinnerDialogComponent, {
+      panelClass: 'transparent',
+      disableClose: true
+    });
   }
 }
