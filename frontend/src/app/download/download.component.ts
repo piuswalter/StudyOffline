@@ -1,15 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import {
-  AbstractControl,
-  FormArray,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators
-} from '@angular/forms';
-import { AnyAaaaRecord } from 'dns';
-import { Subject } from '../_models';
+import { HttpEvent, HttpEventType } from '@angular/common/http';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatSelectionList } from '@angular/material/list';
+import { Subscription } from 'rxjs';
+import { last, map } from 'rxjs/operators';
+import { Flashcard, Subject } from '../_models';
 import { ApiService } from '../_services/api.service';
+import { ProgressSpinnerDialogComponent } from './progress-spinner-dialog/progress-spinner-dialog.component';
 
 @Component({
   selector: 'app-download',
@@ -17,66 +14,112 @@ import { ApiService } from '../_services/api.service';
   styleUrls: ['./download.component.sass']
 })
 export class DownloadComponent implements OnInit {
-  hide = true;
-  loginForm: FormGroup;
-  subjectForm: FormGroup;
-  subjects: Subject[] = [];
-  progress = 90;
+  @ViewChild('subjectList') subjectList: MatSelectionList | undefined;
+  private subjects: Subject[] = [];
 
-  constructor(
-    private apiService: ApiService,
-    private formBuilder: FormBuilder
-  ) {
-    this.loginForm = this.formBuilder.group({
-      username: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required]
-    });
-    this.subjectForm = this.formBuilder.group({
-      subjects: new FormArray([])
-    });
+  constructor(private apiService: ApiService, private dialog: MatDialog) {}
+
+  ngOnInit(): void {
+    this.fetchSubjects();
   }
 
-  ngOnInit(): void {}
-
-  get f() {
-    return this.loginForm.controls;
+  private cmpSubjectLastUsed(a: Subject, b: Subject) {
+    return new Date(b.last_used).getTime() - new Date(a.last_used).getTime();
   }
 
-  get sf() {
-    return this.subjectForm.controls;
+  private filteredSubjects(active: boolean): Subject[] {
+    return this.subjects
+      .filter((subject) => subject.archived !== active)
+      .sort(this.cmpSubjectLastUsed.bind(this));
   }
 
-  get subjectBoxes() {
-    return this.sf.subjects as FormArray;
+  get activeSubjects(): Subject[] {
+    return this.filteredSubjects(true);
+  }
+  get archivedSubjects(): Subject[] {
+    return this.filteredSubjects(false);
   }
 
-  get isLoggedIn() {
-    return this.apiService.isLoggedIn;
-  }
-
-  onSubmit(): void {
-    this.apiService.login(
-      {
-        username: this.f.username.value,
-        password: this.f.password.value
-      },
-      () => {
-        this.apiService.getSubjects().subscribe((data) => {
-          this.subjects = data.results;
-          this.subjects.forEach(() =>
-            this.subjectBoxes.push(new FormControl(false))
-          );
-        });
-      }
+  /**
+   * maps array of checkbox objects to IDs of selected subjects
+   */
+  get selectedSubjectIds(): number[] {
+    if (!this.subjectList) return [];
+    return this.subjectList.selectedOptions.selected.map(
+      (obj) => obj.value as number
     );
   }
 
+  /**
+   * Add up flashcard count of all selected subjects
+   *
+   * @param selected - List of IDs of the subjects you want to count
+   * @returns - The total flashcard count of all selected subjects
+   */
+  getFlashcardCount(selected: number[]): number {
+    return this.subjects.reduce(
+      (acc, sub) => (selected.includes(sub.id) ? acc + sub.flashcards : acc),
+      0
+    );
+  }
+
+  fetchSubjects(): void {
+    this.apiService.getSubjects().subscribe((data) => {
+      this.subjects = data.results;
+    });
+  }
+
   downloadSubjects(): void {
-    const selectedSubjects = this.subjectForm.value.subjects
-      .map((checked: boolean, i: number) =>
-        checked ? this.subjects[i].id : null
-      )
-      .filter((v: number | undefined) => v !== null);
-    this.progress = 0.1;
+    const dialogRef = this.showProgressSpinnerUntilExecuted();
+    const toFetch =
+      this.getFlashcardCount(this.selectedSubjectIds) +
+      this.selectedSubjectIds.length;
+    let fetched = 0;
+
+    const subscriptions: Subscription[] = [];
+    for (const subjectId of this.selectedSubjectIds) {
+      let subjectFetched = 0;
+      const subscription = this.apiService
+        .getFlashcards(subjectId)
+        .pipe(
+          map((card: HttpEvent<Flashcard>) => {
+            if (card.type === HttpEventType.DownloadProgress) {
+              dialogRef.componentInstance.progress =
+                (100 / toFetch) * ++fetched;
+              subjectFetched++;
+            }
+            return card;
+          }),
+          last()
+        )
+        .subscribe((flashcards) => {
+          fetched += this.getFlashcardCount([subjectId]) - subjectFetched;
+          dialogRef.componentInstance.progress = (100 / toFetch) * ++fetched;
+          console.log('Final flashcards: ', flashcards);
+          if (dialogRef.componentInstance.progress === 100) {
+            dialogRef.close();
+          }
+          // flashcards.map((card) => console.log('test'));
+          // console.log(flashcards.length);
+          // const answr = flashcards.results[0].flashcardinfo.answer_html[0].text;
+          // // images are now encoded within backend!
+          // console.log(answr);
+        });
+      subscriptions.push(subscription);
+      // this.apiService.getFlashcards2(subjectId).subscribe(data => console.log);
+    }
+    dialogRef
+      .afterClosed()
+      .subscribe(() => subscriptions.forEach((sub) => sub.unsubscribe()));
+  }
+
+  showProgressSpinnerUntilExecuted(): MatDialogRef<ProgressSpinnerDialogComponent> {
+    return this.dialog.open(ProgressSpinnerDialogComponent, {
+      panelClass: 'transparent',
+      disableClose: true,
+      data: {
+        mode: 'determinate'
+      }
+    });
   }
 }
