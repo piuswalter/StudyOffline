@@ -41,9 +41,9 @@ export class HomeComponent {
   }
 
   async switchSubject(subjectId: number): Promise<void> {
-    if (this.subjectMap[subjectId]) {
-      this.subjectId = subjectId;
-    }
+    if (!this.subjectMap[subjectId]) return;
+    this.subjectId = subjectId;
+    this.cardIndex = 0;
     this.flashcards = await this.dbService.getFlashcards(this.subjectId);
     this.renderCard();
   }
