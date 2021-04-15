@@ -126,7 +126,7 @@ export class DownloadComponent implements OnInit {
           fetched += this.getFlashcardCount([subjectId]) - subjectFetched;
           dialogRef.componentInstance.progress = (100 / toFetch) * ++fetched;
           console.log('Final flashcards: ', flashcards);
-          if (dialogRef.componentInstance.progress === 100) {
+          if (fetched === toFetch) {
             dialogRef.close();
           }
           // flashcards.map((card) => console.log('test'));
