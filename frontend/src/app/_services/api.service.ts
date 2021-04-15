@@ -1,22 +1,22 @@
 import {
   HttpClient,
   HttpErrorResponse,
-  HttpEvent,
   HttpHeaders,
-  HttpRequest
+  HttpRequest,
+  HttpResponse
 } from '@angular/common/http';
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { throwError } from 'rxjs/internal/observable/throwError';
 import { retry, catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import {
-  Flashcard,
+  IStudySmarterFlashcard,
+  IStudySmarterSubject,
   LoginRequest,
   LoginResponse,
-  StudySmarterResponse,
-  Subject
-} from '../_models';
+  StudySmarterResponse
+} from '../_models/studysmarter';
 import { StudySmarterService } from './study-smarter.service';
 
 const handleError = (error: HttpErrorResponse): Observable<never> => {
@@ -36,8 +36,7 @@ const handleError = (error: HttpErrorResponse): Observable<never> => {
 export class ApiService {
   constructor(
     private http: HttpClient,
-    private studySmarter: StudySmarterService,
-    private zone: NgZone
+    private studySmarter: StudySmarterService
   ) {}
 
   private get httpOptions(): { headers: HttpHeaders } | any {
@@ -85,21 +84,23 @@ export class ApiService {
 
   private fetchUserProgressEndpoint<T>(
     endpoint: string
-  ): Observable<HttpEvent<T>> {
+  ): Observable<HttpResponse<T>> {
     return this.http.request<T>(
       new HttpRequest('GET', this.getApiUrl(endpoint), {
         ...this.httpOptions,
         reportProgress: true,
         observe: 'events'
       })
-    );
+    ) as Observable<HttpResponse<T>>;
   }
 
-  getSubjects(): Observable<StudySmarterResponse<Subject>> {
-    return this.fetchUserEndpoint<Subject>('subjects');
+  getSubjects(): Observable<StudySmarterResponse<IStudySmarterSubject>> {
+    return this.fetchUserEndpoint<IStudySmarterSubject>('subjects');
   }
 
-  getFlashcards(subjectId: number): Observable<HttpEvent<Flashcard>> {
+  getFlashcards(
+    subjectId: number
+  ): Observable<HttpResponse<IStudySmarterFlashcard>> {
     return this.fetchUserProgressEndpoint(`subjects/${subjectId}/flashcards`);
   }
 }
