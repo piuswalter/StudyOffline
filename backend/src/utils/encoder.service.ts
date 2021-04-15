@@ -65,7 +65,8 @@ export default class FlashcardEncoder extends Readable {
 
   // eslint-disable-next-line class-methods-use-this
   async encodeFromURL(imageURL: string): Promise<string> {
-    const { data } = await Axios.get(imageURL);
-    return Buffer.from(data, 'binary').toString('base64');
+    const { data, headers } = await Axios.get(imageURL, { responseType: 'arraybuffer' });
+    const prefix = `data:${headers['content-type']};base64, `;
+    return prefix + Buffer.from(data, 'binary').toString('base64');
   }
 }
