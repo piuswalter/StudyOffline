@@ -1,7 +1,10 @@
 <div class="container">
   <mat-form-field appearance="fill" class="coursePicker">
     <mat-label>Select course</mat-label>
-    <mat-select [(value)]="subjectId" (selectionChange)="switchSubject(subjectId)">
+    <mat-select
+      [(value)]="subjectId"
+      (selectionChange)="switchSubject(subjectId)"
+    >
       <mat-option *ngFor="let subject of subjects" [value]="subject.id">
         {{ subject.name }}
       </mat-option>

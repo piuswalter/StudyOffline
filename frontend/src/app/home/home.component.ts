@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { DbService } from '../_services/db.service';
 import { Subject } from '../_models/subject.class';
 import { Flashcard } from '../_models/flashcard.class';
