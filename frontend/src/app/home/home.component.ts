@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { DbService } from '../_services/db.service';
 import { Subject } from '../_models/subject.class';
 import { Flashcard } from '../_models/flashcard.class';
@@ -9,11 +9,10 @@ import { Flashcard } from '../_models/flashcard.class';
   styleUrls: ['./home.component.sass']
 })
 export class HomeComponent {
-  @ViewChild('question') question!: ElementRef<HTMLDivElement>;
-  @ViewChild('answer') answer!: ElementRef<HTMLDivElement>;
-
   subjectId = 0;
   hideAnswer = true;
+  question = '';
+  answer = '';
   private cardIndex = 0;
   private subjectMap: { [key: number]: Subject } = {};
   private flashcards: Flashcard[] = [];
@@ -52,12 +51,11 @@ export class HomeComponent {
     this.hideAnswer = true;
     if (this.flashcards[this.cardIndex]) {
       const { question, answers } = this.flashcards[this.cardIndex];
-      this.question.nativeElement.innerHTML = question;
+      this.question = question;
       if (answers.length !== 1) {
-        this.answer.nativeElement.innerHTML =
-          '<p>Multiple Choice has not implemented yet</p>';
+        this.answer = '<p>Multiple Choice has not implemented yet</p>';
       } else {
-        this.answer.nativeElement.innerHTML = answers[0].text;
+        this.answer = answers[0].text;
       }
     }
   }

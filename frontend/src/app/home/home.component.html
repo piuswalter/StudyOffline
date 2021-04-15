@@ -33,9 +33,9 @@
       </button>
     </mat-card-actions>
     <mat-card-content class="center">
-      <div #question></div>
+      <div [innerHTML]="question"></div>
       <hr class="halfwidth" />
-      <div #answer [hidden]="hideAnswer"></div>
+      <div [innerHTML]="answer" [hidden]="hideAnswer"></div>
     </mat-card-content>
   </mat-card>
 </div>
