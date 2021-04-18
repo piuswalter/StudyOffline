@@ -1,15 +1,10 @@
-import { HttpEvent, HttpEventType, HttpResponse } from '@angular/common/http';
+import { HttpEventType } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSelectionList } from '@angular/material/list';
 import { Subscription } from 'rxjs';
-import { last, map } from 'rxjs/operators';
-import {
-  IStudySmarterFlashcard,
-  IStudySmarterSubject,
-  StudySmarterFlashcard,
-  StudySmarterSubject
-} from '../_models/studysmarter';
+import { first } from 'rxjs/operators';
+import { IStudySmarterSubject } from '../_models/studysmarter';
 import { ApiService } from '../_services/api.service';
 import { DbService } from '../_services/db.service';
 import { ProgressSpinnerDialogComponent } from './progress-spinner-dialog/progress-spinner-dialog.component';
@@ -92,40 +87,33 @@ export class DownloadComponent implements OnInit {
       const subscription = this.apiService
         .getFlashcards(subjectId)
         .pipe(
-          map((card: HttpEvent<IStudySmarterFlashcard>) => {
-            if (card.type === HttpEventType.DownloadProgress) {
+          first((event) => {
+            if (event.type === HttpEventType.DownloadProgress) {
               dialogRef.componentInstance.progress =
                 (100 / toFetch) * ++fetched;
               subjectFetched++;
             }
-            return card;
-          }),
-          last()
+            return event.type === HttpEventType.Response;
+          })
         )
-        .subscribe((flashcards) => {
-          const cards =
-            ((flashcards as unknown) as HttpResponse<IStudySmarterFlashcard[]>)
-              .body || [];
+        .subscribe((event) => {
+          if (!(event && event.type === HttpEventType.Response)) return;
+          const cards = event.body || [];
 
           const subjectIdx = this.subjects
             .map((sub) => sub.id)
             .indexOf(subjectId);
 
           if (subjectIdx !== -1) {
-            const subject = this.subjects[subjectIdx];
-            this.dbService.subjects
-              .add(new StudySmarterSubject(subject))
-              .then((id) => {
-                void this.dbService.flashcards.bulkAdd(
-                  cards.map((card) => new StudySmarterFlashcard(card, id))
-                );
-              })
-              .catch((err) => console.error(err));
+            this.dbService
+              .addSubject(this.subjects[subjectIdx])
+              .subscribe((dbSubjectId) => {
+                this.dbService.addFlashcards(cards, dbSubjectId).subscribe();
+              });
           }
 
           fetched += this.getFlashcardCount([subjectId]) - subjectFetched;
           dialogRef.componentInstance.progress = (100 / toFetch) * ++fetched;
-          console.log('Final flashcards: ', flashcards);
           if (fetched === toFetch) {
             dialogRef.close();
           }
