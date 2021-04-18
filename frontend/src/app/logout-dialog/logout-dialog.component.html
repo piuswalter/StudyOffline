@@ -1,14 +1,21 @@
-<h2 mat-dialog-title>Download ...</h2>
+<h2 mat-dialog-title>Logout</h2>
 <mat-dialog-content class="mat-typography">
   <div class="spacer-2x"></div>
   <h3>You're about to get signed out</h3>
   <p>
-    This will only sign you out of your account. If you also want to delete
-    your flashcards to save space, check the box below
+    This will only sign you out of your account. If you also want to delete your
+    flashcards to save space, check the box below
   </p>
   <mat-checkbox [(ngModel)]="deleteFlashcards">Delete Flashcards</mat-checkbox>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button mat-dialog-close>Cancel</button>
-  <button mat-button (click)="logout()" [mat-dialog-close]="true" cdkFocusInitial>Sign out</button>
+  <button
+    mat-button
+    (click)="logout()"
+    [mat-dialog-close]="true"
+    cdkFocusInitial
+  >
+    Sign out
+  </button>
 </mat-dialog-actions>
