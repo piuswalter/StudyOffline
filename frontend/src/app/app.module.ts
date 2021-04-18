@@ -21,8 +21,6 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { UploadComponent } from './upload/upload.component';
-import { FeedbackComponent } from './feedback/feedback.component';
 import { HelpComponent } from './help/help.component';
 import { DownloadComponent } from './download/download.component';
 import { HttpClientModule } from '@angular/common/http';
@@ -42,8 +40,6 @@ const initLocalStorage = (studySmarter: StudySmarterService) => {
     AppComponent,
     HomeComponent,
     SettingsComponent,
-    UploadComponent,
-    FeedbackComponent,
     HelpComponent,
     DownloadComponent,
     StudySmarterLoginComponent,
