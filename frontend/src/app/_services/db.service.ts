@@ -61,4 +61,8 @@ export class DbService extends Dexie {
         )
     );
   }
+
+  clearAll(): void {
+    void this.delete();
+  }
 }
