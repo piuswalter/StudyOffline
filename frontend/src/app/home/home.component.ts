@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { DbService } from '../_services/db.service';
 import { Subject } from '../_models/subject.class';
 import { Flashcard } from '../_models/flashcard.class';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-home',
@@ -11,21 +12,16 @@ import { Flashcard } from '../_models/flashcard.class';
 export class HomeComponent {
   subjectId = 0;
   hideAnswer = true;
-  question = '';
-  answer = '';
+  question: SafeHtml = '';
+  answer: SafeHtml = '';
   private cardIndex = 0;
   private subjectMap: { [key: number]: Subject } = {};
   private flashcards: Flashcard[] = [];
 
-  get subject(): Subject {
-    return this.subjectMap[this.subjectId];
-  }
-
-  get subjects(): Subject[] {
-    return Object.values(this.subjectMap);
-  }
-
-  constructor(private dbService: DbService) {
+  constructor(
+    private dbService: DbService,
+    private domSanitizer: DomSanitizer
+  ) {
     this.dbService
       .getSubjects()
       .then((subjects) => {
@@ -39,10 +35,18 @@ export class HomeComponent {
       .catch((err) => console.error(err));
   }
 
+  get subject(): Subject {
+    return this.subjectMap[this.subjectId];
+  }
+
+  get subjects(): Subject[] {
+    return Object.values(this.subjectMap);
+  }
+
   async switchSubject(subjectId: number): Promise<void> {
     if (!this.subjectMap[subjectId]) return;
     this.subjectId = subjectId;
-    this.cardIndex = 0;
+    this.cardIndex = 0; // reset index to circumvent array index out of bounds
     this.flashcards = await this.dbService.getFlashcards(this.subjectId);
     this.renderCard();
   }
@@ -51,11 +55,13 @@ export class HomeComponent {
     this.hideAnswer = true;
     if (this.flashcards[this.cardIndex]) {
       const { question, answers } = this.flashcards[this.cardIndex];
-      this.question = question;
+      this.question = this.domSanitizer.bypassSecurityTrustHtml(question);
       if (answers.length !== 1) {
         this.answer = '<p>Multiple Choice has not implemented yet</p>';
       } else {
-        this.answer = answers[0].text;
+        this.answer = this.domSanitizer.bypassSecurityTrustHtml(
+          answers[0].text
+        );
       }
     }
   }

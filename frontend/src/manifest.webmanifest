@@ -1,7 +1,7 @@
 {
-  "name": "frontend",
-  "short_name": "frontend",
-  "theme_color": "#1976d2",
+  "name": "StudyOffline",
+  "short_name": "StudyOffline",
+  "theme_color": "#7b1fa2",
   "background_color": "#fafafa",
   "display": "standalone",
   "scope": "./",
