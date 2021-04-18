@@ -44,12 +44,11 @@ export class HomeComponent {
   }
 
   async switchSubject(subjectId: number): Promise<void> {
-    if (this.subjectMap[subjectId]) {
-      this.subjectId = subjectId;
-      this.flashcards = await this.dbService.getFlashcards(this.subjectId);
-      this.cardIndex = 0; // reset index to circumvent array index out of bounds
-      this.renderCard();
-    }
+    if (!this.subjectMap[subjectId]) return;
+    this.subjectId = subjectId;
+    this.cardIndex = 0; // reset index to circumvent array index out of bounds
+    this.flashcards = await this.dbService.getFlashcards(this.subjectId);
+    this.renderCard();
   }
 
   renderCard(): void {
