@@ -117,14 +117,8 @@ export class DownloadComponent implements OnInit {
           if (fetched === toFetch) {
             dialogRef.close();
           }
-          // flashcards.map((card) => console.log('test'));
-          // console.log(flashcards.length);
-          // const answr = flashcards.results[0].flashcardinfo.answer_html[0].text;
-          // // images are now encoded within backend!
-          // console.log(answr);
         });
       subscriptions.push(subscription);
-      // this.apiService.getFlashcards2(subjectId).subscribe(data => console.log);
     }
     dialogRef
       .afterClosed()

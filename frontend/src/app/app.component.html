@@ -11,14 +11,8 @@
     <a [routerLink]="['/download']" mat-icon-button>
       <mat-icon>download</mat-icon>
     </a>
-    <a [routerLink]="['/upload']" mat-icon-button>
-      <mat-icon>upload</mat-icon>
-    </a>
     <a [routerLink]="['/settings']" mat-icon-button>
       <mat-icon>settings</mat-icon>
-    </a>
-    <a [routerLink]="['/feedback']" mat-icon-button>
-      <mat-icon>sentiment_satisfied_alt</mat-icon>
     </a>
     <a (click)="openLogoutDialog()" *ngIf="isLoggedIn" mat-icon-button>
       <mat-icon>exit_to_app</mat-icon>
