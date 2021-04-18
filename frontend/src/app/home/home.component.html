@@ -35,7 +35,11 @@
     <mat-card-content class="center">
       <div [innerHTML]="question" class="flashcard-text"></div>
       <hr class="halfwidth" />
-      <div [innerHTML]="answer" [hidden]="hideAnswer" class="flashcard-text"></div>
+      <div
+        [innerHTML]="answer"
+        [hidden]="hideAnswer"
+        class="flashcard-text"
+      ></div>
     </mat-card-content>
   </mat-card>
 </div>
