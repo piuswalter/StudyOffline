@@ -1,11 +1,12 @@
-import { HttpEvent, HttpEventType } from '@angular/common/http';
+import { HttpEventType } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSelectionList } from '@angular/material/list';
 import { Subscription } from 'rxjs';
-import { last, map } from 'rxjs/operators';
-import { Flashcard, Subject } from '../_models';
+import { first } from 'rxjs/operators';
+import { IStudySmarterSubject } from '../_models/studysmarter';
 import { ApiService } from '../_services/api.service';
+import { DbService } from '../_services/db.service';
 import { ProgressSpinnerDialogComponent } from './progress-spinner-dialog/progress-spinner-dialog.component';
 
 @Component({
@@ -15,28 +16,32 @@ import { ProgressSpinnerDialogComponent } from './progress-spinner-dialog/progre
 })
 export class DownloadComponent implements OnInit {
   @ViewChild('subjectList') subjectList: MatSelectionList | undefined;
-  private subjects: Subject[] = [];
+  private subjects: IStudySmarterSubject[] = [];
 
-  constructor(private apiService: ApiService, private dialog: MatDialog) {}
+  constructor(
+    private apiService: ApiService,
+    private dialog: MatDialog,
+    private dbService: DbService
+  ) {}
 
   ngOnInit(): void {
     this.fetchSubjects();
   }
 
-  private cmpSubjectLastUsed(a: Subject, b: Subject) {
+  private cmpSubjectLastUsed(a: IStudySmarterSubject, b: IStudySmarterSubject) {
     return new Date(b.last_used).getTime() - new Date(a.last_used).getTime();
   }
 
-  private filteredSubjects(active: boolean): Subject[] {
+  private filteredSubjects(active: boolean): IStudySmarterSubject[] {
     return this.subjects
       .filter((subject) => subject.archived !== active)
       .sort(this.cmpSubjectLastUsed.bind(this));
   }
 
-  get activeSubjects(): Subject[] {
+  get activeSubjects(): IStudySmarterSubject[] {
     return this.filteredSubjects(true);
   }
-  get archivedSubjects(): Subject[] {
+  get archivedSubjects(): IStudySmarterSubject[] {
     return this.filteredSubjects(false);
   }
 
@@ -82,21 +87,34 @@ export class DownloadComponent implements OnInit {
       const subscription = this.apiService
         .getFlashcards(subjectId)
         .pipe(
-          map((card: HttpEvent<Flashcard>) => {
-            if (card.type === HttpEventType.DownloadProgress) {
+          first((event) => {
+            if (event.type === HttpEventType.DownloadProgress) {
               dialogRef.componentInstance.progress =
                 (100 / toFetch) * ++fetched;
               subjectFetched++;
             }
-            return card;
-          }),
-          last()
+            return event.type === HttpEventType.Response;
+          })
         )
-        .subscribe((flashcards) => {
+        .subscribe((event) => {
+          if (!(event && event.type === HttpEventType.Response)) return;
+          const cards = event.body || [];
+
+          const subjectIdx = this.subjects
+            .map((sub) => sub.id)
+            .indexOf(subjectId);
+
+          if (subjectIdx !== -1) {
+            this.dbService
+              .addSubject(this.subjects[subjectIdx])
+              .subscribe((dbSubjectId) => {
+                this.dbService.addFlashcards(cards, dbSubjectId).subscribe();
+              });
+          }
+
           fetched += this.getFlashcardCount([subjectId]) - subjectFetched;
           dialogRef.componentInstance.progress = (100 / toFetch) * ++fetched;
-          console.log('Final flashcards: ', flashcards);
-          if (dialogRef.componentInstance.progress === 100) {
+          if (fetched === toFetch) {
             dialogRef.close();
           }
           // flashcards.map((card) => console.log('test'));

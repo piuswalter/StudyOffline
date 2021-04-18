@@ -3,20 +3,21 @@ import {
   HttpErrorResponse,
   HttpEvent,
   HttpHeaders,
-  HttpRequest
+  HttpRequest,
+  HttpResponse
 } from '@angular/common/http';
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { throwError } from 'rxjs/internal/observable/throwError';
 import { retry, catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import {
-  Flashcard,
+  IStudySmarterFlashcard,
+  IStudySmarterSubject,
   LoginRequest,
   LoginResponse,
-  StudySmarterResponse,
-  Subject
-} from '../_models';
+  StudySmarterResponse
+} from '../_models/studysmarter';
 import { StudySmarterService } from './study-smarter.service';
 
 const handleError = (error: HttpErrorResponse): Observable<never> => {
@@ -36,18 +37,15 @@ const handleError = (error: HttpErrorResponse): Observable<never> => {
 export class ApiService {
   constructor(
     private http: HttpClient,
-    private studySmarter: StudySmarterService,
-    private zone: NgZone
+    private studySmarter: StudySmarterService
   ) {}
 
-  private get httpOptions(): { headers: HttpHeaders } | any {
-    if (!this.studySmarter.apiToken) return {};
-    return {
-      headers: new HttpHeaders({
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        Authorization: `Token ${this.studySmarter.apiToken}`
-      })
-    };
+  private get httpHeaders(): HttpHeaders {
+    if (!this.studySmarter.apiToken) return {} as HttpHeaders;
+    return new HttpHeaders({
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      Authorization: `Token ${this.studySmarter.apiToken}`
+    });
   }
 
   login(data: LoginRequest, save: boolean, callback = () => {}): Subscription {
@@ -74,32 +72,36 @@ export class ApiService {
   private fetchUserEndpoint<T>(
     endpoint: string
   ): Observable<StudySmarterResponse<T>> {
-    return ((this.http.get(
-      this.getApiUrl(endpoint),
-      this.httpOptions
-    ) as unknown) as Observable<StudySmarterResponse<T>>).pipe(
-      retry(1),
-      catchError(handleError)
-    );
+    return this.http
+      .get<StudySmarterResponse<T>>(this.getApiUrl(endpoint), {
+        headers: this.httpHeaders
+      })
+      .pipe(retry(1), catchError(handleError));
   }
 
   private fetchUserProgressEndpoint<T>(
     endpoint: string
-  ): Observable<HttpEvent<T>> {
-    return this.http.request<T>(
+  ): Observable<HttpEvent<T[]>> {
+    return this.http.request<T[]>(
       new HttpRequest('GET', this.getApiUrl(endpoint), {
-        ...this.httpOptions,
+        headers: this.httpHeaders,
         reportProgress: true,
         observe: 'events'
       })
     );
   }
 
-  getSubjects(): Observable<StudySmarterResponse<Subject>> {
-    return this.fetchUserEndpoint<Subject>('subjects');
+  getSubjects(): Observable<StudySmarterResponse<IStudySmarterSubject>> {
+    return this.fetchUserEndpoint<IStudySmarterSubject>('subjects');
   }
 
-  getFlashcards(subjectId: number): Observable<HttpEvent<Flashcard>> {
-    return this.fetchUserProgressEndpoint(`subjects/${subjectId}/flashcards`);
+  getFlashcards(
+    subjectId: number
+  ): Observable<
+    HttpEvent<IStudySmarterFlashcard[]> | HttpResponse<IStudySmarterFlashcard[]>
+  > {
+    return this.fetchUserProgressEndpoint<IStudySmarterFlashcard>(
+      `subjects/${subjectId}/flashcards`
+    );
   }
 }

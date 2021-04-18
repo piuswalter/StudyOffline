@@ -32,6 +32,7 @@
         (click)="downloadSubjects()"
         class="full-width"
         color="primary"
+        [disabled]="!selectedSubjectIds.length"
       >
         Download
       </button>

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { LoginResponse } from '../_models';
+import { LoginResponse } from '../_models/studysmarter';
 
 @Injectable({ providedIn: 'root' })
 export class StudySmarterService {

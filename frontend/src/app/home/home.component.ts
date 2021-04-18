@@ -1,53 +1,69 @@
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  OnInit,
-  ViewChild
-} from '@angular/core';
-import { courses as courseList } from './test';
-import { FlashCard } from './flashcard.interface';
+import { Component } from '@angular/core';
+import { DbService } from '../_services/db.service';
+import { Subject } from '../_models/subject.class';
+import { Flashcard } from '../_models/flashcard.class';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.sass']
 })
-export class HomeComponent implements OnInit, AfterViewInit {
-  @ViewChild('question') question!: ElementRef<HTMLDivElement>;
-  @ViewChild('answer') answer!: ElementRef<HTMLDivElement>;
-
-  course = '';
-  courseNames: string[];
+export class HomeComponent {
+  subjectId = 0;
   hideAnswer = true;
-  private cards: FlashCard[] = [];
-  private courses: any = courseList;
-  private index = 0;
+  question: SafeHtml = '';
+  answer: SafeHtml = '';
+  private cardIndex = 0;
+  private subjectMap: { [key: number]: Subject } = {};
+  private flashcards: Flashcard[] = [];
 
-  constructor() {
-    this.courseNames = Object.keys(courseList);
+  constructor(
+    private dbService: DbService,
+    private domSanitizer: DomSanitizer
+  ) {
+    this.dbService
+      .getSubjects()
+      .then((subjects) => {
+        subjects.forEach((sub) => (this.subjectMap[sub.id || -1] = sub));
+        if (subjects.length) this.subjectId = subjects[0].id || -1;
+        void this.dbService.getFlashcards(this.subjectId).then((cards) => {
+          this.flashcards = cards;
+          this.renderCard();
+        });
+      })
+      .catch((err) => console.error(err));
   }
 
-  ngOnInit(): void {}
-
-  ngAfterViewInit(): void {
-    this.course = this.courseNames ? this.courseNames[0] : '';
-    this.changeCourse(this.course);
-    this.renderCard();
+  get subject(): Subject {
+    return this.subjectMap[this.subjectId];
   }
 
-  changeCourse(course: string): void {
-    if (this.courses[course]) {
-      this.cards = this.courses[course];
+  get subjects(): Subject[] {
+    return Object.values(this.subjectMap);
+  }
+
+  async switchSubject(subjectId: number): Promise<void> {
+    if (this.subjectMap[subjectId]) {
+      this.subjectId = subjectId;
+      this.flashcards = await this.dbService.getFlashcards(this.subjectId);
+      this.cardIndex = 0; // reset index to circumvent array index out of bounds
+      this.renderCard();
     }
   }
 
   renderCard(): void {
     this.hideAnswer = true;
-    if (this.cards[this.index]) {
-      const { question, answer } = this.cards[this.index];
-      this.question.nativeElement.innerHTML = question;
-      this.answer.nativeElement.innerHTML = answer;
+    if (this.flashcards[this.cardIndex]) {
+      const { question, answers } = this.flashcards[this.cardIndex];
+      this.question = this.domSanitizer.bypassSecurityTrustHtml(question);
+      if (answers.length !== 1) {
+        this.answer = '<p>Multiple Choice has not implemented yet</p>';
+      } else {
+        this.answer = this.domSanitizer.bypassSecurityTrustHtml(
+          answers[0].text
+        );
+      }
     }
   }
 
@@ -56,10 +72,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   switchCard(inc: number): void {
-    const cl = this.cards.length;
+    const cl = this.flashcards.length;
     if (!inc) inc = this.randomNumber(1, cl - 1);
-    this.index = (this.index + inc) % cl;
-    if (this.index < 0) this.index = cl - 1;
+    this.cardIndex = (this.cardIndex + inc) % cl;
+    if (this.cardIndex < 0) this.cardIndex = cl - 1;
     this.renderCard();
   }
 }
