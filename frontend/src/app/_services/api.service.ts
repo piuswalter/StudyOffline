@@ -1,6 +1,7 @@
 import {
   HttpClient,
   HttpErrorResponse,
+  HttpEvent,
   HttpHeaders,
   HttpRequest,
   HttpResponse
@@ -39,14 +40,12 @@ export class ApiService {
     private studySmarter: StudySmarterService
   ) {}
 
-  private get httpOptions(): { headers: HttpHeaders } | any {
-    if (!this.studySmarter.apiToken) return {};
-    return {
-      headers: new HttpHeaders({
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        Authorization: `Token ${this.studySmarter.apiToken}`
-      })
-    };
+  private get httpHeaders(): HttpHeaders {
+    if (!this.studySmarter.apiToken) return {} as HttpHeaders;
+    return new HttpHeaders({
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      Authorization: `Token ${this.studySmarter.apiToken}`
+    });
   }
 
   login(data: LoginRequest, save: boolean, callback = () => {}): Subscription {
@@ -73,25 +72,23 @@ export class ApiService {
   private fetchUserEndpoint<T>(
     endpoint: string
   ): Observable<StudySmarterResponse<T>> {
-    return ((this.http.get(
-      this.getApiUrl(endpoint),
-      this.httpOptions
-    ) as unknown) as Observable<StudySmarterResponse<T>>).pipe(
-      retry(1),
-      catchError(handleError)
-    );
+    return this.http
+      .get<StudySmarterResponse<T>>(this.getApiUrl(endpoint), {
+        headers: this.httpHeaders
+      })
+      .pipe(retry(1), catchError(handleError));
   }
 
   private fetchUserProgressEndpoint<T>(
     endpoint: string
-  ): Observable<HttpResponse<T>> {
-    return this.http.request<T>(
+  ): Observable<HttpEvent<T[]>> {
+    return this.http.request<T[]>(
       new HttpRequest('GET', this.getApiUrl(endpoint), {
-        ...this.httpOptions,
+        headers: this.httpHeaders,
         reportProgress: true,
         observe: 'events'
       })
-    ) as Observable<HttpResponse<T>>;
+    );
   }
 
   getSubjects(): Observable<StudySmarterResponse<IStudySmarterSubject>> {
@@ -100,7 +97,11 @@ export class ApiService {
 
   getFlashcards(
     subjectId: number
-  ): Observable<HttpResponse<IStudySmarterFlashcard>> {
-    return this.fetchUserProgressEndpoint(`subjects/${subjectId}/flashcards`);
+  ): Observable<
+    HttpEvent<IStudySmarterFlashcard[]> | HttpResponse<IStudySmarterFlashcard[]>
+  > {
+    return this.fetchUserProgressEndpoint<IStudySmarterFlashcard>(
+      `subjects/${subjectId}/flashcards`
+    );
   }
 }
