@@ -46,4 +46,9 @@ export class StudySmarterService {
       this.id = userId;
     }
   }
+
+  logout(): void {
+    localStorage.removeItem('StudySmarterToken');
+    localStorage.removeItem('StudySmarterUserId');
+  }
 }
