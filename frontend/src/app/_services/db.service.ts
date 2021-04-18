@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
 import Dexie from 'dexie';
+import { from, Observable } from 'rxjs';
 import { Flashcard } from '../_models/flashcard.class';
 import {
+  IStudySmarterFlashcard,
+  IStudySmarterSubject,
   StudySmarterFlashcard,
   StudySmarterSubject
 } from '../_models/studysmarter';
@@ -22,10 +25,29 @@ export class DbService extends Dexie {
     });
   }
 
+  addSubject(subject: IStudySmarterSubject): Observable<number> {
+    return from(this.subjects.add(new StudySmarterSubject(subject)));
+  }
+
   async getSubjects(): Promise<Subject[]> {
     const raw = await this.subjects.toArray();
     return raw.map(
-      (sub) => new StudySmarterSubject((sub as any).studySmarter, sub.id)
+      (sub) =>
+        new StudySmarterSubject(
+          (sub as StudySmarterSubject).studySmarter,
+          sub.id
+        )
+    );
+  }
+
+  addFlashcards(
+    flashcards: IStudySmarterFlashcard[],
+    subjectId: number
+  ): Observable<number> {
+    return from(
+      this.flashcards.bulkAdd(
+        flashcards.map((card) => new StudySmarterFlashcard(card, subjectId))
+      )
     );
   }
 
@@ -33,7 +55,10 @@ export class DbService extends Dexie {
     const raw = await this.flashcards.where({ subjectId }).toArray();
     return raw.map(
       (card) =>
-        new StudySmarterFlashcard((card as any).studySmarter, card.subjectId)
+        new StudySmarterFlashcard(
+          (card as StudySmarterFlashcard).studySmarter,
+          card.subjectId
+        )
     );
   }
 }
