@@ -1,13 +1,13 @@
 <mat-list-option [value]="subject.id">
-    <!-- <mat-icon mat-list-icon>folder</mat-icon> -->
-    <div mat-line>
-      <p class="subject-selection-item">
-        <span [matBadge]="subject.flashcards" matBadgeOverlap="false">
-          {{ subject.name }}
-        </span>
-      </p>
-    </div>
-    <div mat-line *ngIf="subject.last_used">
-      <p>Last used: {{ subject.last_used | date }}</p>
-    </div>
+  <!-- <mat-icon mat-list-icon>folder</mat-icon> -->
+  <div mat-line>
+    <p class="subject-selection-item">
+      <span [matBadge]="subject.flashcards" matBadgeOverlap="false">
+        {{ subject.name }}
+      </span>
+    </p>
+  </div>
+  <div mat-line *ngIf="subject.last_used">
+    <p>Last used: {{ subject.last_used | date }}</p>
+  </div>
 </mat-list-option>

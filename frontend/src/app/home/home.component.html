@@ -1,9 +1,12 @@
 <div class="container">
   <mat-form-field appearance="fill" class="coursePicker">
     <mat-label>Select course</mat-label>
-    <mat-select [(value)]="course" (selectionChange)="changeCourse(course)">
-      <mat-option *ngFor="let course of courseNames" [value]="course">
-        {{ course }}
+    <mat-select
+      [(value)]="subjectId"
+      (selectionChange)="switchSubject(subjectId)"
+    >
+      <mat-option *ngFor="let subject of subjects" [value]="subject.id">
+        {{ subject.name }}
       </mat-option>
     </mat-select>
   </mat-form-field>
@@ -30,9 +33,13 @@
       </button>
     </mat-card-actions>
     <mat-card-content class="center">
-      <div #question></div>
+      <div [innerHTML]="question" class="flashcard-text"></div>
       <hr class="halfwidth" />
-      <div #answer [hidden]="hideAnswer"></div>
+      <div
+        [innerHTML]="answer"
+        [hidden]="hideAnswer"
+        class="flashcard-text"
+      ></div>
     </mat-card-content>
   </mat-card>
 </div>

@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-export interface Subject {
+export interface IStudySmarterSubject {
   id: number;
   name: string;
   /* eslint-disable @typescript-eslint/naming-convention */

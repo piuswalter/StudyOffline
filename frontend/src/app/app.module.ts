@@ -21,8 +21,6 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { UploadComponent } from './upload/upload.component';
-import { FeedbackComponent } from './feedback/feedback.component';
 import { HelpComponent } from './help/help.component';
 import { DownloadComponent } from './download/download.component';
 import { HttpClientModule } from '@angular/common/http';
@@ -31,6 +29,7 @@ import { StudySmarterLoginComponent } from './study-smarter-login/study-smarter-
 import { StudySmarterService } from './_services/study-smarter.service';
 import { SubjectSelectorComponent } from './download/subject-selector/subject-selector.component';
 import { ProgressSpinnerDialogComponent } from './download/progress-spinner-dialog/progress-spinner-dialog.component';
+import { LogoutDialogComponent } from './logout-dialog/logout-dialog.component';
 
 const initLocalStorage = (studySmarter: StudySmarterService) => {
   return (): void => studySmarter.loadCredentials();
@@ -41,13 +40,12 @@ const initLocalStorage = (studySmarter: StudySmarterService) => {
     AppComponent,
     HomeComponent,
     SettingsComponent,
-    UploadComponent,
-    FeedbackComponent,
     HelpComponent,
     DownloadComponent,
     StudySmarterLoginComponent,
     SubjectSelectorComponent,
-    ProgressSpinnerDialogComponent
+    ProgressSpinnerDialogComponent,
+    LogoutDialogComponent
   ],
   imports: [
     BrowserModule,

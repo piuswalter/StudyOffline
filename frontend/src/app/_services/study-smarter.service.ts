@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { LoginResponse } from '../_models';
+import { LoginResponse } from '../_models/studysmarter';
 
 @Injectable({ providedIn: 'root' })
 export class StudySmarterService {
@@ -45,5 +45,10 @@ export class StudySmarterService {
       this.token = token;
       this.id = userId;
     }
+  }
+
+  logout(): void {
+    localStorage.removeItem('StudySmarterToken');
+    localStorage.removeItem('StudySmarterUserId');
   }
 }
