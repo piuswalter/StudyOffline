@@ -24,6 +24,7 @@ In addition, StudyOffline is a PWA (Progressive Web App) with which you can also
 ## ⚒️ Setup your own StudyOffline instance
 
 [![Deploy with Docker](https://img.shields.io/badge/deploy%20with-docker-0db7ed)]()
+[![CI/CD](https://github.com/piuswalter/StudyOffline/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/piuswalter/StudyOffline/actions/workflows/docker-publish.yml)
 
 At the moment we do not have published StudyOffline to any container registry yet but you can easily build it by hand.
 
