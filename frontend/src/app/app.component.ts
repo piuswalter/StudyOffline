@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { LogoutDialogComponent } from './logout-dialog/logout-dialog.component';
 import { StudySmarterService } from './_services/study-smarter.service';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-root',
@@ -13,8 +14,11 @@ export class AppComponent {
 
   constructor(
     private dialog: MatDialog,
-    private studySmarter: StudySmarterService
-  ) {}
+    private studySmarter: StudySmarterService,
+    private titleService: Title
+  ) {
+    this.titleService.setTitle('StudyOffline');
+  }
 
   get isLoggedIn(): boolean {
     return this.studySmarter.isLoggedIn;
