@@ -54,4 +54,6 @@ You can access StudyOffline in your browser on `https://localhost:3000/`.
 
 ## 📜 License
 
+[![GitHub license](https://img.shields.io/github/license/piuswalter/StudyOffline)](https://github.com/piuswalter/StudyOffline/blob/main/LICENSE.md)
+
 This project is licensed under the AGPL-3.0 License - see the [LICENSE.md](LICENSE.md) file for details
