@@ -29,13 +29,6 @@ export class DbService extends Dexie {
     return from(this.subjects.add(new StudySmarterSubject(subject)));
   }
 
-  async getSubjectIds(): Promise<number[]> {
-    const raw = await this.subjects.toArray();
-    return raw.map(
-      (subject) => (subject as StudySmarterSubject).studySmarter.id
-    );
-  }
-
   async getSubjects(): Promise<Subject[]> {
     const raw = await this.subjects.toArray();
     return raw.map(
@@ -45,15 +38,6 @@ export class DbService extends Dexie {
           sub.id
         )
     );
-  }
-
-  async deleteSubject(subjectId: number): Promise<void> {
-    await this.subjects.delete(subjectId);
-    await this.flashcards.where('subjectId').equals(subjectId).delete();
-  }
-
-  async deleteSubjects(subjectIds: number[]): Promise<void> {
-    await Promise.all(subjectIds.map((id) => this.deleteSubject(id)));
   }
 
   addFlashcards(

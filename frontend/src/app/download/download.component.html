@@ -4,33 +4,6 @@
       <h1 class="mat-headline">Select subjects for download!</h1>
       <div class="spacer-2x"></div>
       <section class="subject-selection">
-
-        <mat-list *ngIf="syncedSubjectIds.length">
-          <div mat-subheader>Synced Subjects</div>
-          <mat-list-item *ngFor="let subject of syncedSubjects">
-            <div mat-line>
-              <p class="subject-selection-item">
-                <span [matBadge]="subject.flashcards" matBadgeOverlap="false">
-                  {{ subject.name }}
-                </span>
-              </p>
-            </div>
-            <div mat-line>
-                Last used: {{ subject.last_used | date }}
-            </div>
-          </mat-list-item>
-
-          <div class="spacer"></div>
-          <button
-            mat-raised-button
-            class="full-width"
-            color="primary"
-            (click)="downloadSubjects(syncedSubjectIds)"
-          >Update</button>
-          <div class="spacer"></div>
-          <mat-divider></mat-divider>
-        </mat-list>
-
         <mat-selection-list #subjectList>
           <div mat-subheader>Active Subjects</div>
           <app-subject-selector
@@ -56,7 +29,7 @@
       <div class="spacer"></div>
       <button
         mat-raised-button
-        (click)="downloadSubjects(selectedSubjectIds)"
+        (click)="downloadSubjects()"
         class="full-width"
         color="primary"
         [disabled]="!selectedSubjectIds.length"

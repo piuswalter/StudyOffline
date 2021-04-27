@@ -17,7 +17,6 @@ import { ProgressSpinnerDialogComponent } from './progress-spinner-dialog/progre
 export class DownloadComponent implements OnInit {
   @ViewChild('subjectList') subjectList: MatSelectionList | undefined;
   private subjects: IStudySmarterSubject[] = [];
-  public syncedSubjectIds: number[] = [];
 
   constructor(
     private apiService: ApiService,
@@ -25,8 +24,7 @@ export class DownloadComponent implements OnInit {
     private dbService: DbService
   ) {}
 
-  async ngOnInit(): Promise<void> {
-    this.syncedSubjectIds = await this.dbService.getSubjectIds();
+  ngOnInit(): void {
     this.fetchSubjects();
   }
 
@@ -36,18 +34,8 @@ export class DownloadComponent implements OnInit {
 
   private filteredSubjects(active: boolean): IStudySmarterSubject[] {
     return this.subjects
-      .filter(
-        (subject) =>
-          subject.archived !== active &&
-          !this.syncedSubjectIds.includes(subject.id)
-      )
+      .filter((subject) => subject.archived !== active)
       .sort(this.cmpSubjectLastUsed.bind(this));
-  }
-
-  get syncedSubjects(): IStudySmarterSubject[] {
-    return this.subjects.filter((sub) =>
-      this.syncedSubjectIds.includes(sub.id)
-    );
   }
 
   get activeSubjects(): IStudySmarterSubject[] {
@@ -86,15 +74,15 @@ export class DownloadComponent implements OnInit {
     });
   }
 
-  async downloadSubjects(subjectIds: number[]): Promise<void> {
+  downloadSubjects(): void {
     const dialogRef = this.showProgressSpinnerUntilExecuted();
-    const toFetch = this.getFlashcardCount(subjectIds) + subjectIds.length;
+    const toFetch =
+      this.getFlashcardCount(this.selectedSubjectIds) +
+      this.selectedSubjectIds.length;
     let fetched = 0;
 
-    await this.dbService.deleteSubjects(subjectIds);
-
     const subscriptions: Subscription[] = [];
-    for (const subjectId of subjectIds) {
+    for (const subjectId of this.selectedSubjectIds) {
       let subjectFetched = 0;
       const subscription = this.apiService
         .getFlashcards(subjectId)
@@ -128,7 +116,6 @@ export class DownloadComponent implements OnInit {
           dialogRef.componentInstance.progress = (100 / toFetch) * ++fetched;
           if (fetched === toFetch) {
             dialogRef.close();
-            void this.ngOnInit();
           }
         });
       subscriptions.push(subscription);
