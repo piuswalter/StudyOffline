@@ -4,6 +4,11 @@ import { Subject } from '../_models/subject.class';
 import { Flashcard } from '../_models/flashcard.class';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
+interface ISafeAnswer {
+  safeHtml: SafeHtml;
+  isCorrect: boolean;
+}
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -14,6 +19,7 @@ export class HomeComponent {
   hideAnswer = true;
   question: SafeHtml = '';
   answer: SafeHtml = '';
+  answers: ISafeAnswer[] = [];
   private cardIndex = 0;
   private subjectMap: { [key: number]: Subject } = {};
   private flashcards: Flashcard[] = [];
@@ -43,6 +49,10 @@ export class HomeComponent {
     return Object.values(this.subjectMap);
   }
 
+  get isMultipleChoice(): boolean {
+    return this.answers.length > 0;
+  }
+
   async switchSubject(subjectId: number): Promise<void> {
     if (!this.subjectMap[subjectId]) return;
     this.subjectId = subjectId;
@@ -57,8 +67,12 @@ export class HomeComponent {
       const { question, answers } = this.flashcards[this.cardIndex];
       this.question = this.domSanitizer.bypassSecurityTrustHtml(question);
       if (answers.length !== 1) {
-        this.answer = '<p>Multiple Choice has not implemented yet</p>';
+        this.answers = answers.map(({ isCorrect, text }) => {
+          const safeHtml = this.domSanitizer.bypassSecurityTrustHtml(text);
+          return { safeHtml, isCorrect };
+        });
       } else {
+        this.answers = [];
         this.answer = this.domSanitizer.bypassSecurityTrustHtml(
           answers[0].text
         );

@@ -35,11 +35,21 @@
     <mat-card-content class="center">
       <div [innerHTML]="question" class="flashcard-text"></div>
       <hr class="halfwidth" />
-      <div
+      <div *ngIf="!isMultipleChoice"
         [innerHTML]="answer"
         [hidden]="hideAnswer"
         class="flashcard-text"
       ></div>
+      <div *ngIf="isMultipleChoice">
+        <div
+          *ngFor="let answer of answers"
+          class="multiple-choice-button"
+          [class.show-solution]="!hideAnswer"
+          [class.correct]="answer.isCorrect"
+          [innerHTML]="answer.safeHtml"
+        ></div>
+      </div>
+
     </mat-card-content>
   </mat-card>
 </div>
