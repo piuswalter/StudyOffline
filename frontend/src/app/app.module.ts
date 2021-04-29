@@ -8,6 +8,7 @@ import { environment } from '../environments/environment';
 import { HomeComponent } from './home/home.component';
 import { SettingsComponent } from './settings/settings.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
@@ -54,6 +55,7 @@ const initLocalStorage = (studySmarter: StudySmarterService) => {
       enabled: environment.production
     }),
     BrowserAnimationsModule,
+    FlexLayoutModule,
     FormsModule,
     HttpClientModule,
     MatBadgeModule,

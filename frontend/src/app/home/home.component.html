@@ -40,14 +40,20 @@
         [hidden]="hideAnswer"
         class="flashcard-text"
       ></div>
-      <div *ngIf="isMultipleChoice">
+      <div *ngIf="isMultipleChoice" fxLayout="row wrap" fxLayout.lt-sm="column" fxLayoutAlign="center center">
         <div
+          fxFlex="calc(50% - 10px)"
+          fxFill
           *ngFor="let answer of answers"
-          class="multiple-choice-button"
-          [class.show-solution]="!hideAnswer"
-          [class.correct]="answer.isCorrect"
-          [innerHTML]="answer.safeHtml"
-        ></div>
+        >
+          <div
+            style="margin: 10px 10px;"
+            class="multiple-choice-button"
+            [class.show-solution]="!hideAnswer"
+            [class.correct]="answer.isCorrect"
+            [innerHTML]="answer.safeHtml"
+          ></div>
+        </div>
       </div>
 
     </mat-card-content>
