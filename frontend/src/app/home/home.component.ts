@@ -7,6 +7,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 interface ISafeAnswer {
   safeHtml: SafeHtml;
   isCorrect: boolean;
+  isSelected: boolean;
 }
 
 @Component({
@@ -69,7 +70,7 @@ export class HomeComponent {
       if (answers.length !== 1) {
         this.answers = answers.map(({ isCorrect, text }) => {
           const safeHtml = this.domSanitizer.bypassSecurityTrustHtml(text);
-          return { safeHtml, isCorrect };
+          return { safeHtml, isCorrect, isSelected: false };
         });
       } else {
         this.answers = [];
@@ -90,5 +91,16 @@ export class HomeComponent {
     this.cardIndex = (this.cardIndex + inc) % cl;
     if (this.cardIndex < 0) this.cardIndex = cl - 1;
     this.renderCard();
+  }
+
+  onCardClicked(idx: number): void {
+    if (!this.hideAnswer) return;
+    this.answers[idx].isSelected = !this.answers[idx].isSelected;
+  }
+
+  get isAnswerCorrect(): boolean {
+    return this.answers.every(
+      (answer) => answer.isSelected === answer.isCorrect
+    );
   }
 }

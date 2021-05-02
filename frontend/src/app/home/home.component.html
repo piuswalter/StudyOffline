@@ -36,22 +36,28 @@
       <div [innerHTML]="question" class="flashcard-text"></div>
       <hr class="halfwidth" />
       <div
-        *ngIf="!isMultipleChoice"
-        [innerHTML]="answer"
-        [hidden]="hideAnswer"
-        class="flashcard-text"
+      *ngIf="!isMultipleChoice"
+      [innerHTML]="answer"
+      [hidden]="hideAnswer"
+      class="flashcard-text"
       ></div>
+      <div *ngIf="isMultipleChoice && !hideAnswer">
+        <p *ngIf="isAnswerCorrect">Correct 🥳</p>
+        <p *ngIf="!isAnswerCorrect">That was probably not quite tivial 😨</p>
+      </div>
       <div
         *ngIf="isMultipleChoice"
         fxLayout="row wrap"
         fxLayout.lt-sm="column"
         fxLayoutAlign="center center"
       >
-        <div fxFlex="calc(50% - 10px)" fxFill *ngFor="let answer of answers">
+        <div fxFlex="calc(50% - 10px)" fxFill *ngFor="let answer of answers; let idx = index">
           <div
             class="multiple-choice-button"
+            (click)="onCardClicked(idx)"
             [class.show-solution]="!hideAnswer"
             [class.correct]="answer.isCorrect"
+            [class.selected]="answer.isSelected"
             [innerHTML]="answer.safeHtml"
           ></div>
         </div>
