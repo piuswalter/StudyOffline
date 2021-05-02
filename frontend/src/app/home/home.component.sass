@@ -5,8 +5,8 @@
     margin: 5px 0
 
 ::ng-deep.flashcard-text
-    line-height: 2em
-    font-size: 2em
+    line-height: 1rem
+    font-size: 1rem
 
     img
         max-width: 100%
@@ -28,8 +28,37 @@
     width: 60%
 
 .multiple-choice-button
-    background-color: #999999
+    display: flex
+    justify-content: center
+    align-items: center
+    margin: 10px 10px
+    line-height: 1rem
+    font-size: 1rem
+    min-height: 70px
+    background-color: #666666
+
 .multiple-choice-button.show-solution
-    background-color: red
+    background-color: #d95850
+
 .multiple-choice-button.show-solution.correct
-    background-color: green
+    background-color: #48ad6c
+
+@media only screen and (min-width: 900px)
+    .multiple-choice-button
+        line-height: 1.5rem
+        font-size: 1.5rem
+        min-height: 90px
+
+    ::ng-deep.flashcard-text
+        line-height: 1.5rem
+        font-size: 1.5rem
+
+@media only screen and (min-width: 1500px)
+    .multiple-choice-button
+        line-height: 1.8rem
+        font-size: 1.8rem
+        min-height: 120px
+
+    ::ng-deep.flashcard-text
+        line-height: 1.8rem
+        font-size: 1.8rem

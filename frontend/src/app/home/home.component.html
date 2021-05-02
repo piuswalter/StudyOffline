@@ -49,7 +49,6 @@
       >
         <div fxFlex="calc(50% - 10px)" fxFill *ngFor="let answer of answers">
           <div
-            style="margin: 10px 10px"
             class="multiple-choice-button"
             [class.show-solution]="!hideAnswer"
             [class.correct]="answer.isCorrect"
