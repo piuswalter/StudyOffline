@@ -31,6 +31,7 @@ import { StudySmarterService } from './_services/study-smarter.service';
 import { SubjectSelectorComponent } from './download/subject-selector/subject-selector.component';
 import { ProgressSpinnerDialogComponent } from './download/progress-spinner-dialog/progress-spinner-dialog.component';
 import { LogoutDialogComponent } from './logout-dialog/logout-dialog.component';
+import { FlashcardComponent } from './home/flashcard/flashcard.component';
 
 const initLocalStorage = (studySmarter: StudySmarterService) => {
   return (): void => studySmarter.loadCredentials();
@@ -46,7 +47,8 @@ const initLocalStorage = (studySmarter: StudySmarterService) => {
     StudySmarterLoginComponent,
     SubjectSelectorComponent,
     ProgressSpinnerDialogComponent,
-    LogoutDialogComponent
+    LogoutDialogComponent,
+    FlashcardComponent
   ],
   imports: [
     BrowserModule,

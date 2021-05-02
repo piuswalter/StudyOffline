@@ -11,57 +11,5 @@
     </mat-select>
   </mat-form-field>
 
-  <mat-card class="flashcard">
-    <mat-card-header class="title">
-      <mat-card-title>Frage</mat-card-title>
-    </mat-card-header>
-    <mat-card-actions class="controls">
-      <button (click)="switchCard(-1)" mat-mini-fab color="primary">
-        <mat-icon aria-hidden="false">chevron_left</mat-icon>
-      </button>
-      <button
-        (click)="hideAnswer = !hideAnswer"
-        mat-raised-button
-        color="primary"
-      >
-        Show answer
-      </button>
-      <button (click)="switchCard(1)" mat-mini-fab color="primary">
-        <mat-icon aria-hidden="false" aria-label="Chevron right icon"
-          >chevron_right</mat-icon
-        >
-      </button>
-    </mat-card-actions>
-    <mat-card-content class="center">
-      <div [innerHTML]="question" class="flashcard-text"></div>
-      <hr class="halfwidth" />
-      <div
-      *ngIf="!isMultipleChoice"
-      [innerHTML]="answer"
-      [hidden]="hideAnswer"
-      class="flashcard-text"
-      ></div>
-      <div *ngIf="isMultipleChoice && !hideAnswer">
-        <p *ngIf="isAnswerCorrect">Correct 🥳</p>
-        <p *ngIf="!isAnswerCorrect">That was probably not quite tivial 😨</p>
-      </div>
-      <div
-        *ngIf="isMultipleChoice"
-        fxLayout="row wrap"
-        fxLayout.lt-sm="column"
-        fxLayoutAlign="center center"
-      >
-        <div fxFlex="calc(50% - 10px)" fxFill *ngFor="let answer of answers; let idx = index">
-          <div
-            class="multiple-choice-button"
-            (click)="onCardClicked(idx)"
-            [class.show-solution]="!hideAnswer"
-            [class.correct]="answer.isCorrect"
-            [class.selected]="answer.isSelected"
-            [innerHTML]="answer.safeHtml"
-          ></div>
-        </div>
-      </div>
-    </mat-card-content>
-  </mat-card>
+  <app-flashcard [flashcard]="flashcard" (switchCard)="switchCard($event)"></app-flashcard>
 </div>
