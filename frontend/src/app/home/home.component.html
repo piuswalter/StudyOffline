@@ -35,19 +35,21 @@
     <mat-card-content class="center">
       <div [innerHTML]="question" class="flashcard-text"></div>
       <hr class="halfwidth" />
-      <div *ngIf="!isMultipleChoice"
+      <div
+        *ngIf="!isMultipleChoice"
         [innerHTML]="answer"
         [hidden]="hideAnswer"
         class="flashcard-text"
       ></div>
-      <div *ngIf="isMultipleChoice" fxLayout="row wrap" fxLayout.lt-sm="column" fxLayoutAlign="center center">
-        <div
-          fxFlex="calc(50% - 10px)"
-          fxFill
-          *ngFor="let answer of answers"
-        >
+      <div
+        *ngIf="isMultipleChoice"
+        fxLayout="row wrap"
+        fxLayout.lt-sm="column"
+        fxLayoutAlign="center center"
+      >
+        <div fxFlex="calc(50% - 10px)" fxFill *ngFor="let answer of answers">
           <div
-            style="margin: 10px 10px;"
+            style="margin: 10px 10px"
             class="multiple-choice-button"
             [class.show-solution]="!hideAnswer"
             [class.correct]="answer.isCorrect"
@@ -55,7 +57,6 @@
           ></div>
         </div>
       </div>
-
     </mat-card-content>
   </mat-card>
 </div>
