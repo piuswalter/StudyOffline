@@ -44,24 +44,24 @@
             *ngFor="let subject of archivedSubjects"
             [subject]="subject"
           ></app-subject-selector>
+          <p class="download-information">
+            You've selected
+            {{ subjectList.selectedOptions.selected.length }} Subjects
+            containing {{ getFlashcardCount(selectedSubjectIds) }} Flashcards
+          </p>
+          <div class="spacer"></div>
+          <button
+            mat-raised-button
+            (click)="downloadSubjects(selectedSubjectIds)"
+            class="full-width"
+            color="primary"
+            [disabled]="!selectedSubjectIds.length"
+          >
+            Download
+          </button>
+          <div class="spacer"></div>
         </mat-selection-list>
-
-        <p>
-          You've selected
-          {{ subjectList.selectedOptions.selected.length }} Subjects containing
-          {{ getFlashcardCount(selectedSubjectIds) }} Flashcards
-        </p>
       </section>
-      <div class="spacer"></div>
-      <button
-        mat-raised-button
-        (click)="downloadSubjects(selectedSubjectIds)"
-        class="full-width"
-        color="primary"
-        [disabled]="!selectedSubjectIds.length"
-      >
-        Download
-      </button>
     </mat-card>
   </div>
 </div>
