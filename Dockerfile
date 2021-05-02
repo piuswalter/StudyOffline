@@ -1,4 +1,4 @@
-FROM node:14.14-alpine
+FROM node:16.0.0-alpine
 ENV NODE_ENV=development
 
 WORKDIR /tmp
@@ -18,6 +18,6 @@ RUN rm -r /tmp/backend /tmp/frontend
 
 ENV NODE_ENV=production
 COPY backend/package*.json ./
-RUN npm ci
+RUN npm ci && npm cache clean --force
 
 CMD ["node", "./src/app.js"]
