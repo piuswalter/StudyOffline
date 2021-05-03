@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { DbService } from '../_services/db.service';
 import { Subject } from '../_models/subject.class';
 import { Flashcard } from '../_models/flashcard.class';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-home',
@@ -11,17 +10,11 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 })
 export class HomeComponent {
   subjectId = 0;
-  hideAnswer = true;
-  question: SafeHtml = '';
-  answer: SafeHtml = '';
   private cardIndex = 0;
   private subjectMap: { [key: number]: Subject } = {};
   private flashcards: Flashcard[] = [];
 
-  constructor(
-    private dbService: DbService,
-    private domSanitizer: DomSanitizer
-  ) {
+  constructor(private dbService: DbService) {
     this.dbService
       .getSubjects()
       .then((subjects) => {
@@ -29,10 +22,14 @@ export class HomeComponent {
         if (subjects.length) this.subjectId = subjects[0].id || -1;
         void this.dbService.getFlashcards(this.subjectId).then((cards) => {
           this.flashcards = cards;
-          this.renderCard();
         });
       })
       .catch((err) => console.error(err));
+  }
+
+  get flashcard(): Flashcard | undefined {
+    if (this.cardIndex >= this.flashcards.length) return undefined;
+    return this.flashcards[this.cardIndex];
   }
 
   get subject(): Subject {
@@ -48,22 +45,6 @@ export class HomeComponent {
     this.subjectId = subjectId;
     this.cardIndex = 0; // reset index to circumvent array index out of bounds
     this.flashcards = await this.dbService.getFlashcards(this.subjectId);
-    this.renderCard();
-  }
-
-  renderCard(): void {
-    this.hideAnswer = true;
-    if (this.flashcards[this.cardIndex]) {
-      const { question, answers } = this.flashcards[this.cardIndex];
-      this.question = this.domSanitizer.bypassSecurityTrustHtml(question);
-      if (answers.length !== 1) {
-        this.answer = '<p>Multiple Choice has not implemented yet</p>';
-      } else {
-        this.answer = this.domSanitizer.bypassSecurityTrustHtml(
-          answers[0].text
-        );
-      }
-    }
   }
 
   randomNumber(min: number, max: number): number {
@@ -75,6 +56,5 @@ export class HomeComponent {
     if (!inc) inc = this.randomNumber(1, cl - 1);
     this.cardIndex = (this.cardIndex + inc) % cl;
     if (this.cardIndex < 0) this.cardIndex = cl - 1;
-    this.renderCard();
   }
 }
