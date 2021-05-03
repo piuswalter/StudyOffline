@@ -47,13 +47,18 @@ export class DbService extends Dexie {
     );
   }
 
-  async deleteSubject(subjectId: number): Promise<void> {
-    await this.subjects.delete(subjectId);
-    await this.flashcards.where('subjectId').equals(subjectId).delete();
+  async deleteSubject(studySmarterId: number): Promise<void> {
+    const subject = await this.subjects
+      .where('studySmarter.id')
+      .equals(studySmarterId)
+      .first();
+    if (!subject?.id) return;
+    await this.subjects.delete(subject.id);
+    await this.flashcards.where('subjectId').equals(subject.id).delete();
   }
 
-  async deleteSubjects(subjectIds: number[]): Promise<void> {
-    await Promise.all(subjectIds.map((id) => this.deleteSubject(id)));
+  async deleteSubjects(studySmarterIds: number[]): Promise<void> {
+    await Promise.all(studySmarterIds.map((id) => this.deleteSubject(id)));
   }
 
   addFlashcards(
