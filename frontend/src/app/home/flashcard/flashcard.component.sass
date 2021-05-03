@@ -32,6 +32,7 @@
     font-size: 1rem
     min-height: 70px
     background-color: #666666
+    cursor: pointer
 
 .multiple-choice-button.selected
     background-color: #308e8a
@@ -42,11 +43,22 @@
 .multiple-choice-button.show-solution.correct
     background-color: #48ad6c
 
+.multiple-choice-feedback
+    line-height: 1rem
+    font-size: 1rem
+    margin: 10px
+    padding: 20px
+    background-color: #308e8a
+
 @media only screen and (min-width: 900px)
     .multiple-choice-button
         line-height: 1.5rem
         font-size: 1.5rem
         min-height: 90px
+
+    .multiple-choice-feedback
+        line-height: 1.5rem
+        font-size: 1.5rem
 
     ::ng-deep.flashcard-text
         line-height: 1.5rem
@@ -57,6 +69,10 @@
         line-height: 1.8rem
         font-size: 1.8rem
         min-height: 120px
+    
+    .multiple-choice-feedback
+        line-height: 1.8rem
+        font-size: 1.8rem
 
     ::ng-deep.flashcard-text
         line-height: 1.8rem

@@ -11,7 +11,7 @@
       mat-raised-button
       color="primary"
     >
-      Show answer
+      {{ hideAnswer ? "Show" : "Hide" }} answer
     </button>
     <button (click)="switchCard.emit(1)" mat-mini-fab color="primary">
       <mat-icon aria-hidden="false" aria-label="Chevron right icon"
@@ -28,9 +28,14 @@
       [hidden]="hideAnswer"
       class="flashcard-text"
     ></div>
-    <div *ngIf="isMultipleChoice && !hideAnswer">
-      <p *ngIf="isAnswerCorrect">Correct 🥳</p>
-      <p *ngIf="!isAnswerCorrect">That was probably not quite tivial 😨</p>
+    <div
+      *ngIf="isMultipleChoice && !hideAnswer"
+      class="multiple-choice-feedback"
+    >
+      <span *ngIf="isAnswerCorrect">Correct 🥳</span>
+      <span *ngIf="!isAnswerCorrect"
+        >That was probably not quite tivial 😨</span
+      >
     </div>
     <div
       *ngIf="isMultipleChoice"
