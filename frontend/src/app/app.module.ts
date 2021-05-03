@@ -8,6 +8,7 @@ import { environment } from '../environments/environment';
 import { HomeComponent } from './home/home.component';
 import { SettingsComponent } from './settings/settings.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
@@ -30,6 +31,7 @@ import { StudySmarterService } from './_services/study-smarter.service';
 import { SubjectSelectorComponent } from './download/subject-selector/subject-selector.component';
 import { ProgressSpinnerDialogComponent } from './download/progress-spinner-dialog/progress-spinner-dialog.component';
 import { LogoutDialogComponent } from './logout-dialog/logout-dialog.component';
+import { FlashcardComponent } from './home/flashcard/flashcard.component';
 
 const initLocalStorage = (studySmarter: StudySmarterService) => {
   return (): void => studySmarter.loadCredentials();
@@ -45,7 +47,8 @@ const initLocalStorage = (studySmarter: StudySmarterService) => {
     StudySmarterLoginComponent,
     SubjectSelectorComponent,
     ProgressSpinnerDialogComponent,
-    LogoutDialogComponent
+    LogoutDialogComponent,
+    FlashcardComponent
   ],
   imports: [
     BrowserModule,
@@ -54,6 +57,7 @@ const initLocalStorage = (studySmarter: StudySmarterService) => {
       enabled: environment.production
     }),
     BrowserAnimationsModule,
+    FlexLayoutModule,
     FormsModule,
     HttpClientModule,
     MatBadgeModule,
