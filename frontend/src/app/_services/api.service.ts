@@ -7,8 +7,7 @@ import {
   HttpResponse
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
-import { throwError } from 'rxjs/internal/observable/throwError';
+import { Observable, Subscription, throwError } from 'rxjs';
 import { retry, catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import {
