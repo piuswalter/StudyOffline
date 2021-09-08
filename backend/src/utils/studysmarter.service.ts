@@ -34,3 +34,7 @@ export async function getFlashcards(userId: string, subjectId: string, apiToken:
   return request<StudySmarterResponse<Flashcard>>('get', `users/${userId}/subjects/${subjectId}/flashcards/?quantity=99999&s_bad=true&s_medium=true&s_good=true&s_trash=true&s_unseen=true&order=anti-chronological`, null, { authorization: `Token ${apiToken}` });
 }
 // &created_by=
+
+export async function getTags(userId: string, subjectId: string, apiToken: string) {
+  return request<StudySmarterResponse<Subject>>('get', `users/${userId}/subjects/${subjectId}/tags/`, null, { authorization: `Token ${apiToken}` });
+}
