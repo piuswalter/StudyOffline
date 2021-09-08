@@ -10,7 +10,7 @@ export default (router: Router) => {
    *   get:
    *     tags:
    *       - Subjects
-   *     summary: get subjects from specific user
+   *     summary: get subjects from specified user
    *     security:
    *       - token: []
    *     parameters:
@@ -51,7 +51,7 @@ export default (router: Router) => {
    *   get:
    *     tags:
    *       - Flashcards
-   *     summary: get flashcards from specific subject and user
+   *     summary: get flashcards from specified subject and user
    *     security:
    *       - token: []
    *     parameters:
