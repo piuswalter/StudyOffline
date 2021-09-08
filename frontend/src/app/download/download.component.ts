@@ -4,7 +4,11 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSelectionList } from '@angular/material/list';
 import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
-import { IStudySmarterSubject } from '../_models/studysmarter';
+import {
+  IStudySmarterSubject,
+  IStudySmarterTag,
+  StudySmarterResponse
+} from '../_models/studysmarter';
 import { ApiService } from '../_services/api.service';
 import { DbService } from '../_services/db.service';
 import { ProgressSpinnerDialogComponent } from './progress-spinner-dialog/progress-spinner-dialog.component';
@@ -86,6 +90,15 @@ export class DownloadComponent implements OnInit {
     });
   }
 
+  fetchTags(subjectId: number): Subscription {
+    return this.apiService
+      .getTags(subjectId)
+      .subscribe((res: StudySmarterResponse<IStudySmarterTag>) => {
+        console.warn(res);
+        this.dbService.addTags(res.results, subjectId);
+      });
+  }
+
   async downloadSubjects(subjectIds: number[]): Promise<void> {
     const dialogRef = this.showProgressSpinnerUntilExecuted();
     const toFetch = this.getFlashcardCount(subjectIds) + subjectIds.length;
@@ -132,6 +145,7 @@ export class DownloadComponent implements OnInit {
           }
         });
       subscriptions.push(subscription);
+      subscriptions.push(this.fetchTags(subjectId));
     }
     dialogRef
       .afterClosed()
