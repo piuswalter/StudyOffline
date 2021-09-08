@@ -5,3 +5,5 @@ export * from './login-response.interface';
 export * from './response.interface';
 export * from './subject.class';
 export * from './subject.interface';
+export * from './tag.class';
+export * from './tag.interface';
