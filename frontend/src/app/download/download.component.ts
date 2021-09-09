@@ -90,15 +90,22 @@ export class DownloadComponent implements OnInit {
     });
   }
 
-  fetchTags(subjectId: number): Subscription {
+  /**
+   * @param subjectId - StudySmarter subject ID
+   * @param dbSubjectId - Internal database subject ID
+   * @returns - Subscription from api request
+   */
+  fetchTags(subjectId: number, dbSubjectId: number): Subscription {
     return this.apiService
       .getTags(subjectId)
       .subscribe((res: StudySmarterResponse<IStudySmarterTag>) => {
-        console.warn(res);
-        this.dbService.addTags(res.results, subjectId);
+        this.dbService.addTags(res.results, dbSubjectId);
       });
   }
 
+  /**
+   * @param subjectIds - StudySmarter subject ID
+   */
   async downloadSubjects(subjectIds: number[]): Promise<void> {
     const dialogRef = this.showProgressSpinnerUntilExecuted();
     const toFetch = this.getFlashcardCount(subjectIds) + subjectIds.length;
@@ -134,6 +141,8 @@ export class DownloadComponent implements OnInit {
               .addSubject(this.subjects[subjectIdx])
               .subscribe((dbSubjectId) => {
                 this.dbService.addFlashcards(cards, dbSubjectId).subscribe();
+                // ToDo: Handle async request
+                this.fetchTags(subjectId, dbSubjectId);
               });
           }
 
@@ -145,7 +154,6 @@ export class DownloadComponent implements OnInit {
           }
         });
       subscriptions.push(subscription);
-      subscriptions.push(this.fetchTags(subjectId));
     }
     dialogRef
       .afterClosed()

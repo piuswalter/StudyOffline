@@ -11,6 +11,23 @@
     </mat-select>
   </mat-form-field>
 
+  <mat-form-field appearance="fill" class="tagPicker">
+    <mat-label>Filter tags</mat-label>
+    <mat-select [formControl]="tagControl" multiple>
+      <mat-option *ngFor="let tag of allTags" [value]="tag.studySmarterId">
+        {{ tag.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div class="pb-1">
+    <mat-chip-list>
+      <mat-chip *ngFor="let tag of flashcardTags">
+        {{ tag.name }}
+      </mat-chip>
+    </mat-chip-list>
+  </div>
+
   <app-flashcard
     [flashcard]="flashcard"
     (switchCard)="switchCard($event)"
