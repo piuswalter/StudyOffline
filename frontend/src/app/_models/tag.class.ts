@@ -1,9 +1,10 @@
 export abstract class Tag {
-  id?: number;
+  subjectId: number;
 
-  constructor(id?: number) {
-    this.id = id;
+  constructor(subjectId: number) {
+    this.subjectId = subjectId;
   }
 
   abstract name: string;
+  abstract studySmarterId: number | undefined;
 }
