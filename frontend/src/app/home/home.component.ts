@@ -13,9 +13,9 @@ import { FormControl } from '@angular/forms';
 export class HomeComponent {
   subjectId = 0;
   tagControl = new FormControl();
+  tags: Tag[] = [];
   private cardIndex = 0;
   private subjectMap: { [key: number]: Subject } = {};
-  private tagMap: { [key: number]: Tag } = {};
   private flashcards: Flashcard[] = [];
 
   constructor(private dbService: DbService) {
@@ -24,19 +24,17 @@ export class HomeComponent {
       .then((subjects) => {
         subjects.forEach((sub) => (this.subjectMap[sub.id || -1] = sub));
         if (subjects.length) this.subjectId = subjects[0].id || -1;
-        void this.dbService.getFlashcards(this.subjectId).then((cards) => {
-          this.flashcards = cards;
-        });
-      })
-      .then(() => {
-        this.dbService
-          .getTags(this.subjectId)
-          .then((tags) => {
-            this.tagMap = tags;
-          })
-          .catch((err) => console.error(err));
+        this.updateSubjectContent();
       })
       .catch((err) => console.error(err));
+  }
+
+  /**
+   * Update content of the current subjects, i.e. related flashcards and tags
+   */
+  private async updateSubjectContent() {
+    this.tags = await this.dbService.getTags(this.subjectId);
+    this.flashcards = await this.dbService.getFlashcards(this.subjectId);
   }
 
   get flashcard(): Flashcard | undefined {
@@ -72,12 +70,8 @@ export class HomeComponent {
     return Object.values(this.subjectMap);
   }
 
-  get allTags(): Tag[] {
-    return Object.values(this.tagMap);
-  }
-
   get flashcardTags(): Tag[] {
-    return this.allTags.filter((tag) =>
+    return this.tags.filter((tag) =>
       this.flashcard?.tags.includes(tag.studySmarterId ?? -1)
     );
   }
@@ -86,8 +80,7 @@ export class HomeComponent {
     if (!this.subjectMap[subjectId]) return;
     this.subjectId = subjectId;
     this.cardIndex = 0; // reset index to circumvent array index out of bounds
-    this.tagMap = await this.dbService.getTags(subjectId);
-    this.flashcards = await this.dbService.getFlashcards(subjectId);
+    await this.updateSubjectContent();
   }
 
   randomNumber(min: number, max: number): number {
