@@ -98,7 +98,10 @@ export class DbService extends Dexie {
     const raw = await this.tags.where({ subjectId }).toArray();
     return raw.map(
       (tag) =>
-        new StudySmarterTag((tag as StudySmarterTag).studySmarter, tag.id)
+        new StudySmarterTag(
+          (tag as StudySmarterTag).studySmarter,
+          tag.subjectId
+        )
     );
   }
 
