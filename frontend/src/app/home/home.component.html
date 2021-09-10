@@ -12,7 +12,12 @@
   </mat-form-field>
 
   <mat-form-field appearance="fill" class="tagPicker">
-    <mat-label>Filter tags</mat-label>
+    <mat-label
+      >Filter tags ({{ selectedTagsAmount }}/{{
+        tags.length
+      }}
+      selected)</mat-label
+    >
     <mat-select [formControl]="tagControl" multiple>
       <mat-option *ngFor="let tag of tags" [value]="tag.studySmarterId">
         {{ tag.name }}
