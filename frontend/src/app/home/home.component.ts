@@ -1,8 +1,4 @@
-import {
-  Component,
-  ChangeDetectorRef,
-  AfterContentChecked
-} from '@angular/core';
+import { Component } from '@angular/core';
 import { DbService } from '../_services/db.service';
 import { Subject } from '../_models/subject.class';
 import { Flashcard } from '../_models/flashcard.class';
@@ -14,16 +10,15 @@ import { FormControl } from '@angular/forms';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.sass']
 })
-export class HomeComponent implements AfterContentChecked {
+export class HomeComponent {
   subjectId = 0;
-  selectedTagsAmount = 0;
   tagControl = new FormControl();
   tags: Tag[] = [];
   private cardIndex = 0;
   private subjectMap: { [key: number]: Subject } = {};
   private flashcards: Flashcard[] = [];
 
-  constructor(private dbService: DbService, private cdref: ChangeDetectorRef) {
+  constructor(private dbService: DbService) {
     this.dbService
       .getSubjects()
       .then((subjects) => {
@@ -32,10 +27,6 @@ export class HomeComponent implements AfterContentChecked {
         void this.updateSubjectContent();
       })
       .catch((err) => console.error(err));
-  }
-
-  ngAfterContentChecked(): void {
-    this.cdref.detectChanges();
   }
 
   /**
@@ -57,7 +48,6 @@ export class HomeComponent implements AfterContentChecked {
   get selectedTagIds(): number[] {
     const raw = this.tagControl.value as string[];
     if (!raw) return [];
-    this.selectedTagsAmount = raw.length;
     return raw.map((id) => parseInt(id, 10));
   }
 
