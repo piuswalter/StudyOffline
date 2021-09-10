@@ -24,7 +24,7 @@ export class HomeComponent {
       .then((subjects) => {
         subjects.forEach((sub) => (this.subjectMap[sub.id || -1] = sub));
         if (subjects.length) this.subjectId = subjects[0].id || -1;
-        this.updateSubjectContent();
+        void this.updateSubjectContent();
       })
       .catch((err) => console.error(err));
   }
