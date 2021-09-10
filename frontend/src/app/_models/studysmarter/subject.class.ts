@@ -1,5 +1,4 @@
 import { IStudySmarterSubject } from '.';
-import { Flashcard } from '../flashcard.class';
 import { Subject } from '../subject.class';
 
 export class StudySmarterSubject extends Subject {
@@ -16,9 +15,5 @@ export class StudySmarterSubject extends Subject {
 
   get archived(): boolean {
     return this.studySmarter.archived;
-  }
-
-  get flashcards(): Flashcard[] {
-    return [];
   }
 }

@@ -14,6 +14,7 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -64,6 +65,7 @@ const initLocalStorage = (studySmarter: StudySmarterService) => {
     MatButtonModule,
     MatCardModule,
     MatCheckboxModule,
+    MatChipsModule,
     MatDialogModule,
     MatIconModule,
     MatInputModule,

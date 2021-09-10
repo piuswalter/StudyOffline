@@ -4,7 +4,11 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSelectionList } from '@angular/material/list';
 import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
-import { IStudySmarterSubject } from '../_models/studysmarter';
+import {
+  IStudySmarterSubject,
+  IStudySmarterTag,
+  StudySmarterResponse
+} from '../_models/studysmarter';
 import { ApiService } from '../_services/api.service';
 import { DbService } from '../_services/db.service';
 import { ProgressSpinnerDialogComponent } from './progress-spinner-dialog/progress-spinner-dialog.component';
@@ -86,6 +90,22 @@ export class DownloadComponent implements OnInit {
     });
   }
 
+  /**
+   * @param subjectId - StudySmarter subject ID
+   * @param dbSubjectId - Internal database subject ID
+   * @returns - Subscription from api request
+   */
+  fetchTags(subjectId: number, dbSubjectId: number): Subscription {
+    return this.apiService
+      .getTags(subjectId)
+      .subscribe((res: StudySmarterResponse<IStudySmarterTag>) => {
+        this.dbService.addTags(res.results, dbSubjectId);
+      });
+  }
+
+  /**
+   * @param subjectIds - StudySmarter subject ID
+   */
   async downloadSubjects(subjectIds: number[]): Promise<void> {
     const dialogRef = this.showProgressSpinnerUntilExecuted();
     const toFetch = this.getFlashcardCount(subjectIds) + subjectIds.length;
@@ -121,6 +141,8 @@ export class DownloadComponent implements OnInit {
               .addSubject(this.subjects[subjectIdx])
               .subscribe((dbSubjectId) => {
                 this.dbService.addFlashcards(cards, dbSubjectId).subscribe();
+                // ToDo: Handle async request
+                this.fetchTags(subjectId, dbSubjectId);
               });
           }
 

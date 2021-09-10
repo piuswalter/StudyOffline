@@ -13,6 +13,7 @@ import { environment } from 'src/environments/environment';
 import {
   IStudySmarterFlashcard,
   IStudySmarterSubject,
+  IStudySmarterTag,
   LoginRequest,
   LoginResponse,
   StudySmarterResponse
@@ -101,6 +102,14 @@ export class ApiService {
   > {
     return this.fetchUserProgressEndpoint<IStudySmarterFlashcard>(
       `subjects/${subjectId}/flashcards`
+    );
+  }
+
+  getTags(
+    subjectId: number
+  ): Observable<StudySmarterResponse<IStudySmarterTag>> {
+    return this.fetchUserEndpoint<IStudySmarterTag>(
+      `subjects/${subjectId}/tags`
     );
   }
 }
