@@ -26,7 +26,7 @@
     "dexie": "^3.0.3",
     "rxjs": "^7.3.0",
     "tslib": "^2.3.1",
-    "zone.js": "~0.10.2"
+    "zone.js": "^0.11.4"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^12.2.5",
