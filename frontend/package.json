@@ -25,7 +25,7 @@
     "@angular/service-worker": "^12.2.5",
     "dexie": "^3.0.3",
     "rxjs": "^7.3.0",
-    "tslib": "^2.1.0",
+    "tslib": "^2.3.1",
     "zone.js": "~0.10.2"
   },
   "devDependencies": {
