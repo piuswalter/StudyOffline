@@ -21,7 +21,7 @@
     "@angular/material": "^12.2.5",
     "@angular/platform-browser": "^12.2.5",
     "@angular/platform-browser-dynamic": "^12.2.5",
-    "@angular/router": "^11.0.9",
+    "@angular/router": "^12.2.5",
     "@angular/service-worker": "^11.0.9",
     "dexie": "^3.0.3",
     "rxjs": "^6.6.7",
