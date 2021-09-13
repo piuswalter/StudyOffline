@@ -24,7 +24,7 @@
     "@angular/router": "^12.2.5",
     "@angular/service-worker": "^12.2.5",
     "dexie": "^3.0.3",
-    "rxjs": "^6.6.7",
+    "rxjs": "^7.3.0",
     "tslib": "^2.1.0",
     "zone.js": "~0.10.2"
   },
