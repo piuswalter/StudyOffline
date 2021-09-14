@@ -1,5 +1,3 @@
-import { Flashcard } from './flashcard.class';
-
 export abstract class Subject {
   id?: number;
 
@@ -9,5 +7,4 @@ export abstract class Subject {
 
   abstract name: string;
   abstract archived: boolean;
-  abstract flashcards: Flashcard[];
 }

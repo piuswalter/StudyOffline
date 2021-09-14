@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getSubjects, getFlashcards } from './users.controller';
+import { getSubjects, getFlashcards, getTags } from './users.controller';
 
 export default (router: Router) => {
   const userRouter = Router();
@@ -10,7 +10,7 @@ export default (router: Router) => {
    *   get:
    *     tags:
    *       - Subjects
-   *     summary: get subjects from specific user
+   *     summary: get subjects from specified user
    *     security:
    *       - token: []
    *     parameters:
@@ -51,7 +51,7 @@ export default (router: Router) => {
    *   get:
    *     tags:
    *       - Flashcards
-   *     summary: get flashcards from specific subject and user
+   *     summary: get flashcards from specified subject and user
    *     security:
    *       - token: []
    *     parameters:
@@ -123,6 +123,56 @@ export default (router: Router) => {
    *                           type: object
    */
   userRouter.get('/:userId/subjects/:subjectId/flashcards', getFlashcards);
+
+  /**
+   * @swagger
+   * /users/{userId}/subjects/{subjectId}/tags:
+   *   get:
+   *     tags:
+   *       - Tags
+   *     summary: get tags from specified subject and user
+   *     security:
+   *       - token: []
+   *     parameters:
+   *       - in: path
+   *         name: userId
+   *         description: ID of the user
+   *         required: true
+   *         schema:
+   *           type: string
+   *       - in: path
+   *         name: subjectId
+   *         description: ID of the subject
+   *         required: true
+   *         schema:
+   *           type: string
+   *     responses:
+   *       "200":
+   *         description: list of tags
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: array
+   *               items:
+   *                 type: object
+   *                 properties:
+   *                   id:
+   *                     type: integer
+   *                     description: tag ID
+   *                   name:
+   *                     type: string
+   *                     description: name of the tag
+   *                   colour:
+   *                     type: number
+   *                     description: color of the tag
+   *                   subject:
+   *                     type: number
+   *                     description: subject ID of the tag
+   *                   creator:
+   *                     type: number
+   *                     description: creator of the tag
+   */
+  userRouter.get('/:userId/subjects/:subjectId/tags', getTags);
 
   router.use('/users', userRouter);
 };

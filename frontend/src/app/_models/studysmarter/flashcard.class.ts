@@ -36,6 +36,6 @@ export class StudySmarterFlashcard extends Flashcard {
   }
 
   get tags(): number[] {
-    return [];
+    return this.studySmarter.community_applied_tag_ids;
   }
 }

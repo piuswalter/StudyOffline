@@ -5,10 +5,13 @@ import { Flashcard } from '../_models/flashcard.class';
 import {
   IStudySmarterFlashcard,
   IStudySmarterSubject,
+  IStudySmarterTag,
   StudySmarterFlashcard,
-  StudySmarterSubject
+  StudySmarterSubject,
+  StudySmarterTag
 } from '../_models/studysmarter';
 import { Subject } from '../_models/subject.class';
+import { Tag } from '../_models/tag.class';
 
 @Injectable({
   providedIn: 'root'
@@ -16,12 +19,14 @@ import { Subject } from '../_models/subject.class';
 export class DbService extends Dexie {
   subjects!: Dexie.Table<Subject, number>;
   flashcards!: Dexie.Table<Flashcard, number>;
+  tags!: Dexie.Table<Tag, number>;
 
   constructor() {
     super('StudyOffline');
     this.version(1).stores({
       subjects: '++id,&studySmarter.id',
-      flashcards: '++id,subjectId'
+      flashcards: '++id,subjectId',
+      tags: '++id,&studySmarter.id,subjectId'
     });
   }
 
@@ -79,6 +84,23 @@ export class DbService extends Dexie {
         new StudySmarterFlashcard(
           (card as StudySmarterFlashcard).studySmarter,
           card.subjectId
+        )
+    );
+  }
+
+  addTags(tags: IStudySmarterTag[], subjectId: number): Observable<number> {
+    return from(
+      this.tags.bulkAdd(tags.map((tag) => new StudySmarterTag(tag, subjectId)))
+    );
+  }
+
+  async getTags(subjectId: number): Promise<Tag[]> {
+    const raw = await this.tags.where({ subjectId }).toArray();
+    return raw.map(
+      (tag) =>
+        new StudySmarterTag(
+          (tag as StudySmarterTag).studySmarter,
+          tag.subjectId
         )
     );
   }
