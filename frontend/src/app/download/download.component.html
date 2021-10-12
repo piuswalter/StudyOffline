@@ -9,7 +9,7 @@
           <mat-list-item *ngFor="let subject of syncedSubjects">
             <div mat-line>
               <p class="subject-selection-item">
-                <span [matBadge]="subject.flashcards" matBadgeOverlap="false">
+                <span [matBadge]="subject.flashcard_count" matBadgeOverlap="false">
                   {{ subject.name }}
                 </span>
               </p>

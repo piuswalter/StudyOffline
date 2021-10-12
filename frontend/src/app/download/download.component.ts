@@ -79,7 +79,7 @@ export class DownloadComponent implements OnInit {
    */
   getFlashcardCount(selected: number[]): number {
     return this.subjects.reduce(
-      (acc, sub) => (selected.includes(sub.id) ? acc + sub.flashcards : acc),
+      (acc, sub) => (selected.includes(sub.id) ? acc + sub.flashcard_count : acc),
       0
     );
   }
