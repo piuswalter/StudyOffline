@@ -6,6 +6,7 @@ import {
   LoginResponse,
   StudySmarterResponse,
   Subject,
+  TagContainer
 } from '../models';
 
 const { url } = config.studysmarter;
@@ -31,10 +32,10 @@ export async function getSubjects(userId: string, apiToken: string) {
 }
 
 export async function getFlashcards(userId: string, subjectId: string, apiToken: string) {
-  return request<StudySmarterResponse<Flashcard>>('get', `users/${userId}/subjects/${subjectId}/flashcards/?quantity=99999&s_bad=true&s_medium=true&s_good=true&s_trash=true&s_unseen=true&order=anti-chronological`, null, { authorization: `Token ${apiToken}` });
+  return request<StudySmarterResponse<Flashcard>>('get', `users/${userId}/course-subjects/${subjectId}/flashcards/?quantity=9999&s_bad=true&s_medium=true&s_good=true&s_trash=true&s_unseen=true&order=anti-chronological`, null, { authorization: `Token ${apiToken}` });
 }
 // &created_by=
 
 export async function getTags(userId: string, subjectId: string, apiToken: string) {
-  return request<StudySmarterResponse<Subject>>('get', `users/${userId}/subjects/${subjectId}/tags/`, null, { authorization: `Token ${apiToken}` });
+  return request<TagContainer>('get', `users/${userId}/course-subjects/${subjectId}/tags/`, null, { authorization: `Token ${apiToken}` });
 }
