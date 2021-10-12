@@ -98,8 +98,8 @@ export class DownloadComponent implements OnInit {
   fetchTags(subjectId: number, dbSubjectId: number): Subscription {
     return this.apiService
       .getTags(subjectId)
-      .subscribe((res: StudySmarterResponse<IStudySmarterTag>) => {
-        this.dbService.addTags(res.results, dbSubjectId);
+      .subscribe((res: IStudySmarterTag[]) => {
+        this.dbService.addTags(res, dbSubjectId);
       });
   }
 

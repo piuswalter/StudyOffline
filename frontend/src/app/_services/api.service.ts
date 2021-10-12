@@ -71,9 +71,9 @@ export class ApiService {
 
   private fetchUserEndpoint<T>(
     endpoint: string
-  ): Observable<StudySmarterResponse<T>> {
+  ): Observable<T> {
     return this.http
-      .get<StudySmarterResponse<T>>(this.getApiUrl(endpoint), {
+      .get<T>(this.getApiUrl(endpoint), {
         headers: this.httpHeaders
       })
       .pipe(retry(1), catchError(handleError));
@@ -92,7 +92,7 @@ export class ApiService {
   }
 
   getSubjects(): Observable<StudySmarterResponse<IStudySmarterSubject>> {
-    return this.fetchUserEndpoint<IStudySmarterSubject>('subjects');
+    return this.fetchUserEndpoint<StudySmarterResponse<IStudySmarterSubject>>('subjects');
   }
 
   getFlashcards(
@@ -107,8 +107,8 @@ export class ApiService {
 
   getTags(
     subjectId: number
-  ): Observable<StudySmarterResponse<IStudySmarterTag>> {
-    return this.fetchUserEndpoint<IStudySmarterTag>(
+  ): Observable<IStudySmarterTag[]> {
+    return this.fetchUserEndpoint<IStudySmarterTag[]>(
       `subjects/${subjectId}/tags`
     );
   }
