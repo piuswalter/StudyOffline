@@ -27,7 +27,7 @@ export async function getTags(req: Request, res: Response, next: NextFunction) {
   try {
     const { token, params: { userId, subjectId } } = req as any;
     const json = await studysmarterService.getTags(userId, subjectId, token);
-    res.send(json.data);
+    res.send(json.data.subject_tags);
   } catch (error) {
     next(error);
   }

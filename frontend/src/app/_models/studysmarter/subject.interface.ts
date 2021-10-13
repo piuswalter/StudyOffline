@@ -6,6 +6,6 @@ export interface IStudySmarterSubject {
   user_count: number;
   last_used: Date;
   /* eslint-enable @typescript-eslint/naming-convention */
-  flashcards: number;
+  flashcard_count: number;
   archived: boolean;
 }

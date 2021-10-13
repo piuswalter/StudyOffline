@@ -1,3 +1,5 @@
+import { Tag } from ".";
+
 /* eslint-disable camelcase */
 export interface FlashcardAnswer {
   text: string,
@@ -12,7 +14,8 @@ export interface Flashcard {
     question_html: FlashcardAnswer[],
     answer_html: FlashcardAnswer[],
     hint_html: string[],
-    solution_html: string,
-    tags: any[]
+    solution_html: string
   },
+  tags: any[], // empty
+  community_applied_tag_ids: Tag[],
 }

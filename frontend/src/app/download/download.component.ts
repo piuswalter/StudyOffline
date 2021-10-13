@@ -79,7 +79,7 @@ export class DownloadComponent implements OnInit {
    */
   getFlashcardCount(selected: number[]): number {
     return this.subjects.reduce(
-      (acc, sub) => (selected.includes(sub.id) ? acc + sub.flashcards : acc),
+      (acc, sub) => (selected.includes(sub.id) ? acc + sub.flashcard_count : acc),
       0
     );
   }
@@ -98,8 +98,8 @@ export class DownloadComponent implements OnInit {
   fetchTags(subjectId: number, dbSubjectId: number): Subscription {
     return this.apiService
       .getTags(subjectId)
-      .subscribe((res: StudySmarterResponse<IStudySmarterTag>) => {
-        this.dbService.addTags(res.results, dbSubjectId);
+      .subscribe((res: IStudySmarterTag[]) => {
+        this.dbService.addTags(res, dbSubjectId);
       });
   }
 
