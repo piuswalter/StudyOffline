@@ -1,4 +1,4 @@
-FROM node:16.0.0-alpine
+FROM node:16.13.0-alpine
 ENV NODE_ENV=development
 
 WORKDIR /tmp
