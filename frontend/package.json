@@ -20,7 +20,7 @@
     "@angular/forms": "^13.1.1",
     "@angular/material": "^13.1.1",
     "@angular/platform-browser": "^13.1.1",
-    "@angular/platform-browser-dynamic": "^13.0.2",
+    "@angular/platform-browser-dynamic": "^13.1.1",
     "@angular/router": "^13.0.2",
     "@angular/service-worker": "^13.0.2",
     "dexie": "^3.2.0",
