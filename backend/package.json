@@ -27,7 +27,7 @@
     }
   ],
   "dependencies": {
-    "axios": "^0.24.0",
+    "axios": "^0.25.0",
     "body-parser": "^1.19.1",
     "cheerio-htmlparser2": "^1.0.3",
     "dotenv": "^10.0.0",
