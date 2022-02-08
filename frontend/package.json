@@ -22,7 +22,7 @@
     "@angular/platform-browser": "^13.2.2",
     "@angular/platform-browser-dynamic": "^13.2.2",
     "@angular/router": "^13.2.2",
-    "@angular/service-worker": "^13.1.1",
+    "@angular/service-worker": "^13.2.2",
     "dexie": "^3.2.0",
     "rxjs": "^7.5.1",
     "tslib": "^2.3.1",
