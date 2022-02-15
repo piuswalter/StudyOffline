@@ -39,7 +39,7 @@
     "@angular/compiler-cli": "^13.2.2",
     "@types/jasmine": "^3.10.3",
     "@types/node": "^16.11.25",
-    "@typescript-eslint/eslint-plugin": "^5.8.1",
+    "@typescript-eslint/eslint-plugin": "^5.12.0",
     "@typescript-eslint/parser": "^5.8.1",
     "codelyzer": "^6.0.2",
     "eslint": "^8.5.0",
